@@ -1,7 +1,7 @@
 package com.alexbezhan.instagram
 
 import android.support.test.runner.AndroidJUnit4
-import com.alexbezhan.instagram.common.formatRelativeTimestamp
+import io.jachoteam.kaska.common.formatRelativeTimestamp
 
 import org.junit.Test
 import org.junit.runner.RunWith
