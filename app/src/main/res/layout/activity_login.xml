@@ -18,7 +18,7 @@
             android:layout_marginEnd="50dp"
             android:layout_marginStart="50dp"
             android:layout_marginTop="50dp"
-            android:src="@drawable/instagram"
+            android:src="@drawable/casca"
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
