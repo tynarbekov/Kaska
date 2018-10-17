@@ -11,6 +11,7 @@ import io.jachoteam.kaska.screens.home.HomeActivity
 import io.jachoteam.kaska.screens.register.RegisterActivity
 import com.google.firebase.auth.FirebaseAuth
 import io.jachoteam.kaska.R
+import io.jachoteam.kaska.ResetPasswordActivity
 import kotlinx.android.synthetic.main.activity_login.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
@@ -27,6 +28,7 @@ class LoginActivity : BaseActivity(), KeyboardVisibilityEventListener, View.OnCl
         KeyboardVisibilityEvent.setEventListener(this, this)
         coordinateBtnAndInputs(login_btn, email_input, password_input)
         login_btn.setOnClickListener(this)
+        reset_button.setOnClickListener(this)
         create_account_text.setOnClickListener(this)
 
         mViewModel = initViewModel()
@@ -48,6 +50,7 @@ class LoginActivity : BaseActivity(), KeyboardVisibilityEventListener, View.OnCl
                         password = password_input.text.toString()
                 )
             R.id.create_account_text -> mViewModel.onRegisterClick()
+            R.id.reset_button ->  startActivity(Intent(this, ResetPasswordActivity::class.java))
 
         }
     }

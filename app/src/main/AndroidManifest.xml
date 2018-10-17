@@ -7,34 +7,34 @@
         android:required="true" />
 
     <application
+        android:name=".screens.InstagramApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name="io.jachoteam.kaska.screens.InstagramApp">
-        <activity android:name="io.jachoteam.kaska.screens.home.HomeActivity">
+        android:theme="@style/AppTheme">
+        <activity android:name=".screens.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="io.jachoteam.kaska.screens.search.SearchActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.share.ShareActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.notifications.NotificationsActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.profile.ProfileActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.editprofile.EditProfileActivity" />
+        <activity android:name=".screens.search.SearchActivity" />
+        <activity android:name=".screens.share.ShareActivity" />
+        <activity android:name=".screens.notifications.NotificationsActivity" />
+        <activity android:name=".screens.profile.ProfileActivity" />
+        <activity android:name=".screens.editprofile.EditProfileActivity" />
         <activity
-            android:name="io.jachoteam.kaska.screens.login.LoginActivity"
+            android:name=".screens.login.LoginActivity"
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
-            android:name="io.jachoteam.kaska.screens.register.RegisterActivity"
-            android:windowSoftInputMode="stateVisible|adjustResize"></activity>
-        <activity android:name="io.jachoteam.kaska.screens.profilesettings.ProfileSettingsActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.addfriends.AddFriendsActivity" />
-        <activity android:name="io.jachoteam.kaska.screens.comments.CommentsActivity" />
+            android:name=".screens.register.RegisterActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
+        <activity android:name=".screens.profilesettings.ProfileSettingsActivity" />
+        <activity android:name=".screens.addfriends.AddFriendsActivity" />
+        <activity android:name=".screens.comments.CommentsActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -43,8 +43,10 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/file_paths"></meta-data>
+                android:resource="@xml/file_paths" />
         </provider>
+
+        <activity android:name=".ResetPasswordActivity"></activity>
     </application>
 
 </manifest>
