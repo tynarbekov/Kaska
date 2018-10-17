@@ -26,6 +26,7 @@ class FeedAdapter(private val listener: Listener)
         fun toggleLike(postId: String)
         fun loadLikes(postId: String, position: Int)
         fun openComments(postId: String)
+        fun openProfile(username: String, uid: String)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -62,6 +63,7 @@ class FeedAdapter(private val listener: Listener)
             }
             caption_text.setCaptionText(post.username, post.caption)
             like_image.setOnClickListener { listener.toggleLike(post.id) }
+            username_text.setOnClickListener { listener.openProfile(post.username, post.uid) }
             like_image.setImageResource(
                     if (likes.likedByUser) R.drawable.ic_likes_active
                     else R.drawable.ic_likes_border)
