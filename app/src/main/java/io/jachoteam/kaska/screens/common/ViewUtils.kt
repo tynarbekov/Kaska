@@ -79,7 +79,7 @@ fun ImageView.loadUserPhoto(photoUrl: String?) =
 
 fun ImageView.loadImage(image: String?) =
         ifNotDestroyed {
-            GlideApp.with(this).load(image).centerCrop().into(this)
+            GlideApp.with(this).load(image).centerCrop().fallback(R.drawable.person).into(this)
         }
 
 fun ImageView.loadImageOrHide(image: String?) =
