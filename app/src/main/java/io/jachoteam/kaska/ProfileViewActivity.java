@@ -21,9 +21,12 @@ import io.jachoteam.kaska.models.User;
 import io.jachoteam.kaska.screens.common.GlideApp;
 
 public class ProfileViewActivity extends AppCompatActivity {
+    public String uid;
+    public String username;
     String TAG = "ProfileViewActivity";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference ref;
+    DatabaseReference userRef;
+    DatabaseReference postRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,14 +34,34 @@ public class ProfileViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_view);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         Intent intent = getIntent();
-        String uid = intent.getStringExtra("uid");
-        String username = intent.getStringExtra("username");
+        uid = intent.getStringExtra("uid");
+        username = intent.getStringExtra("username");
         Log.d(TAG, uid + ": " + username);
 
-        ref = database.getReference("users/" + uid);
-        // Attach a listener to read the data at our posts reference
-        ref.addValueEventListener(new ValueEventListener() {
+        userRef = database.getReference("users/" + uid);
+        postRef = database.getReference("images/" + uid);
+        countPostsOfTheUser();
+        updateUserDetails();
+
+        sendMessage();
+    }
+
+    private void sendMessage() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.send_message);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                TODO START CHAT ACTIVITY
+                Snackbar.make(view, "Send message to the user: " + uid + "##" + username, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+    }
+
+    private void updateUserDetails() {
+        userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
@@ -51,31 +74,35 @@ public class ProfileViewActivity extends AppCompatActivity {
                 System.out.println("The read failed: " + databaseError.getCode());
             }
         });
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+    private void countPostsOfTheUser() {
+        ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long count = dataSnapshot.getChildrenCount();
+                TextView postsCount = (TextView) findViewById(R.id.posts_count_text);
+                postsCount.setText(count + "");
             }
-        });
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        };
+        postRef.addListenerForSingleValueEvent(valueEventListener);
     }
 
     public void updateView(User user) {
         ImageView imageView = (ImageView) findViewById(R.id.profile_image);
-        TextView postsCount = (TextView) findViewById(R.id.posts_count_text);
         TextView username = (TextView) findViewById(R.id.username_text);
         TextView followersCount = (TextView) findViewById(R.id.followers_count_text);
         TextView followingCount = (TextView) findViewById(R.id.following_count_text);
+
         followersCount.setText(user.getFollowers().size() + "");
         followingCount.setText(user.getFollows().size() + "");
         username.setText(user.getUsername());
 
         GlideApp.with(this).load(user.getPhoto()).fallback(R.drawable.person).into(imageView);
-
-        // TODO load images for posts count
-//        postsCount.setText(user.);
     }
 
 }
