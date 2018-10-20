@@ -129,30 +129,42 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="450dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="5"
+        app:layout_constraintTop_toTopOf="@+id/toolbar"
+        app:layout_constraintVertical_bias="1.0">
 
         <android.support.design.widget.TabLayout
-            android:id="@+id/tlUserProfileTabs"
+            android:id="@+id/tablayout"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="#fabeee"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="#5be5ad"
-            app:tabIndicatorHeight="4dp"
-            app:tabMode="fixed" />
+            android:layout_height="wrap_content"
+            android:background="@color/grey">
+
+        </android.support.design.widget.TabLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="674dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="160dp">
+
+        </android.support.v4.view.ViewPager>
 
     </FrameLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/images_recycler"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        android:background="@drawable/top_border_grey"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
-        app:layout_constraintTop_toBottomOf="@id/edit_profile_btn">
+    <!--<android.support.v7.widget.RecyclerView-->
+        <!--android:id="@+id/images_recycler"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_marginTop="30dp"-->
+        <!--android:background="@drawable/top_border_grey"-->
+        <!--app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/edit_profile_btn">-->
 
-    </android.support.v7.widget.RecyclerView>
+    <!--</android.support.v7.widget.RecyclerView>-->
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/send_message"

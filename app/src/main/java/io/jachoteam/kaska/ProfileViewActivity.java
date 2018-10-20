@@ -1,9 +1,12 @@
 package io.jachoteam.kaska;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,10 +20,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import io.jachoteam.kaska.dummy.DummyContent;
 import io.jachoteam.kaska.models.User;
 import io.jachoteam.kaska.screens.common.GlideApp;
 
-public class ProfileViewActivity extends AppCompatActivity {
+public class ProfileViewActivity extends AppCompatActivity implements TabFragment.OnListFragmentInteractionListener,
+        Tab2Fragment.OnFragmentInteractionListener, Tab3Fragment.OnFragmentInteractionListener{
     public String uid;
     public String username;
     String TAG = "ProfileViewActivity";
@@ -46,6 +51,35 @@ public class ProfileViewActivity extends AppCompatActivity {
         updateUserDetails();
 
         sendMessage();
+
+        TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
+        final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        viewPager.setAdapter(adapter);
+        viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                viewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+
     }
 
     private void sendMessage() {
@@ -105,4 +139,13 @@ public class ProfileViewActivity extends AppCompatActivity {
         GlideApp.with(this).load(user.getPhoto()).fallback(R.drawable.person).into(imageView);
     }
 
+    @Override
+    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+        Log.i("INTERFACE_CALLEDD", "HREHEHE");
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        Log.i("INTERFACE_CALLEDD", "URI URI URI");
+    }
 }
