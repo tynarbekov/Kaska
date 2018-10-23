@@ -47,7 +47,7 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
 
         userRef = database.getReference("users/" + uid);
         postRef = database.getReference("images/" + uid);
-        countPostsOfTheUser();
+        countPosts();
         updateUserDetails();
 
         sendMessage();
@@ -90,6 +90,8 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
 //                TODO START CHAT ACTIVITY
                 Snackbar.make(view, "Send message to the user: " + uid + "##" + username, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+                Intent chatIntent = new Intent(ProfileViewActivity.this, ChatActivity.class);
+                startActivity(chatIntent);
             }
         });
     }
@@ -110,7 +112,7 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
         });
     }
 
-    private void countPostsOfTheUser() {
+    private void countPosts() {
         ValueEventListener valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
