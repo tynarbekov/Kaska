@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:showAttachmentButton="true"
-        app:attachmentButtonIcon="@drawable/"
+        app:attachmentButtonIcon="@drawable/photo_camera_24dp"
         app:inputHint="@string/hint_enter_a_message"/>
 
 </RelativeLayout>

@@ -3,9 +3,9 @@ package io.jachoteam.kaska;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Base64;
 import android.widget.ImageView;
 
@@ -21,17 +21,15 @@ import java.util.Date;
 
 import io.jachoteam.kaska.models.ChatUser;
 import io.jachoteam.kaska.models.Message;
-import io.jachoteam.kaska.models.User;
 
 public class ChatActivity extends AppCompatActivity {
 
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     private MessagesList messagesList;
     private MessageInput mMessageInput;
     private MessagesListAdapter<IMessage> adapter;
-    private ChatUser user;
     //private Message mMessage;
-
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private ChatUser user;
     private Bitmap imageBitmap;
 
     private void dispatchTakePictureIntent() {
@@ -64,7 +62,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public boolean onSubmit(CharSequence input) {
                 //validate and send message
-                adapter.addToStart(addMessage("1",input.toString()), true);
+                adapter.addToStart(addMessage("1", input.toString()), true);
                 return true;
             }
         });
@@ -91,14 +89,15 @@ public class ChatActivity extends AppCompatActivity {
 
     }
 
-    private Message addMessage(String userId, String text){
-        user = new ChatUser("1","Omurbek",null,true);
-        return new Message(userId,user,text,new Date());
+    private Message addMessage(String userId, String text) {
+        user = new ChatUser("1", "Omurbek", "https://avatars2.githubusercontent.com/u/8253376?s=400&u=35f9101ea224652b4e685d632ca67864de8d2aac&v=4", true);
+        return new Message(userId, user, text, new Date());
     }
 
     public Message getImageMessage() {
-        user = new ChatUser("1","Omurbek",null,true);;
-        Message message = new Message("1", user, null);
+        user = new ChatUser("1", "Omurbek", "https://avatars2.githubusercontent.com/u/8253376?s=400&u=35f9101ea224652b4e685d632ca67864de8d2aac&v=4", true);
+        ;
+        Message message = new Message("1", user, "Sometimes?");
         message.setImage(new Message.Image(BitMapToString(imageBitmap)));
         return message;
     }
@@ -114,18 +113,18 @@ public class ChatActivity extends AppCompatActivity {
         }
     }
 
-    public String BitMapToString(Bitmap bitmap){
-        ByteArrayOutputStream baos=new  ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG,100, baos);
-        byte [] b=baos.toByteArray();
+    public String BitMapToString(Bitmap bitmap) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        byte[] b = baos.toByteArray();
         return Base64.encodeToString(b, Base64.DEFAULT);
     }
 
-    public Bitmap StringToBitMap(String encodedString){
+    public Bitmap StringToBitMap(String encodedString) {
         try {
-            byte [] encodeByte=Base64.decode(encodedString,Base64.DEFAULT);
+            byte[] encodeByte = Base64.decode(encodedString, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.length);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.getMessage();
             return null;
         }
