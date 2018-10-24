@@ -1,11 +1,12 @@
 package io.jachoteam.kaska.screens.home
 
 import android.arch.lifecycle.Observer
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import io.jachoteam.kaska.ProfileViewActivity
 import io.jachoteam.kaska.R
-import io.jachoteam.kaska.data.firebase.common.FirebaseHelper
 import io.jachoteam.kaska.screens.comments.CommentsActivity
 import io.jachoteam.kaska.screens.common.BaseActivity
 import io.jachoteam.kaska.screens.common.setupAuthGuard
@@ -45,6 +46,14 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
     override fun toggleLike(postId: String) {
         Log.d(TAG, "toggleLike: $postId")
         mViewModel.toggleLike(postId)
+    }
+
+    override fun openProfile(username: String, uid: String) {
+        Log.d(TAG, "VIEW PROFILE: $username, $uid")
+        val profileIntent = Intent(this, ProfileViewActivity::class.java)
+        profileIntent.putExtra("uid", uid);
+        profileIntent.putExtra("username", username);
+        startActivity(profileIntent)
     }
 
     override fun loadLikes(postId: String, position: Int) {

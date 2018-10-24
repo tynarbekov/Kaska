@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingEnd="10dp"
+    android:maxHeight="60dp"
     android:paddingStart="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -51,7 +52,7 @@
         style="@style/secondary_small_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/follow"
+        android:text="@string/unfollow"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/username_text" />
 </android.support.constraint.ConstraintLayout>

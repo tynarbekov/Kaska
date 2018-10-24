@@ -24,6 +24,7 @@
     <string name="share">Share</string>
     <string name="enter_a_caption_here">Enter a caption here…</string>
     <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="next">Next</string>
     <string name="reset">Reset</string>
     <string name="enter_full_name_and_password">Enter full name and password</string>
@@ -52,4 +53,10 @@
         <item quantity="one">%d like</item>
         <item quantity="other">%d likes</item>
     </plurals>
+    <string name="title_activity_profile_view">ProfileViewActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hint_enter_a_message">Type a message...</string>
+    <string name="chat_label">Chat</string>
 </resources>

@@ -46,7 +46,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".ResetPasswordActivity"></activity>
+        <activity android:name=".ResetPasswordActivity" />
+        <activity android:name=".ProfileViewActivity" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/chat_label"
+            android:theme="@style/BlueTheme"
+            ></activity>
     </application>
 
 </manifest>
