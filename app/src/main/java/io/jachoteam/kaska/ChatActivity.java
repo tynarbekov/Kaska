@@ -96,7 +96,6 @@ public class ChatActivity extends AppCompatActivity {
 
     public Message getImageMessage() {
         user = new ChatUser("1", "Omurbek", "https://avatars2.githubusercontent.com/u/8253376?s=400&u=35f9101ea224652b4e685d632ca67864de8d2aac&v=4", true);
-        ;
         Message message = new Message("1", user, "Sometimes?");
         message.setImage(new Message.Image(BitMapToString(imageBitmap)));
         return message;

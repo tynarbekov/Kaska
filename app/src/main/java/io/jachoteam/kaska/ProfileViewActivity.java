@@ -87,9 +87,6 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                TODO START CHAT ACTIVITY
-                Snackbar.make(view, "Send message to the user: " + uid + "##" + username, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 Intent chatIntent = new Intent(ProfileViewActivity.this, ChatActivity.class);
                 startActivity(chatIntent);
             }
