@@ -12,15 +12,15 @@ public class Message implements IMessage,
     private String id;
     private String text;
     private Date createdAt;
-    private User user;
+    private ChatUser user;
     private Image image;
     private Voice voice;
 
-    public Message(String id, User user, String text) {
+    public Message(String id, ChatUser user, String text) {
         this(id, user, text, new Date());
     }
 
-    public Message(String id, User user, String text, Date createdAt) {
+    public Message(String id, ChatUser user, String text, Date createdAt) {
         this.id = id;
         this.text = text;
         this.user = user;
@@ -37,13 +37,21 @@ public class Message implements IMessage,
         return text;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     @Override
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
     @Override
-    public User getUser() {
+    public ChatUser getUser() {
         return this.user;
     }
 
@@ -56,24 +64,16 @@ public class Message implements IMessage,
         return voice;
     }
 
+    public void setVoice(Voice voice) {
+        this.voice = voice;
+    }
+
     public String getStatus() {
         return "Sent";
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    public void setVoice(Voice voice) {
-        this.voice = voice;
     }
 
     public static class Image {

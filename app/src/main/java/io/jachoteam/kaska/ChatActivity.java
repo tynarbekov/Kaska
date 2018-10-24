@@ -19,6 +19,7 @@ import com.stfalcon.chatkit.messages.MessagesListAdapter;
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
+import io.jachoteam.kaska.models.ChatUser;
 import io.jachoteam.kaska.models.Message;
 import io.jachoteam.kaska.models.User;
 
@@ -27,7 +28,7 @@ public class ChatActivity extends AppCompatActivity {
     private MessagesList messagesList;
     private MessageInput mMessageInput;
     private MessagesListAdapter<IMessage> adapter;
-    private User user;
+    private ChatUser user;
     //private Message mMessage;
 
     static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -91,12 +92,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private Message addMessage(String userId, String text){
-        user = new User();
+        user = new ChatUser("1","Omurbek",null,true);
         return new Message(userId,user,text,new Date());
     }
 
     public Message getImageMessage() {
-        user = new User();
+        user = new ChatUser("1","Omurbek",null,true);;
         Message message = new Message("1", user, null);
         message.setImage(new Message.Image(BitMapToString(imageBitmap)));
         return message;
