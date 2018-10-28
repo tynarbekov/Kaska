@@ -6,6 +6,7 @@ import java.util.*
 
 data class FeedPost(val uid: String = "", val username: String = "",
                     val image: String = "", val caption: String = "",
+                    val images: List<Image> = emptyList(),
                     val comments: List<Comment> = emptyList(),
                     val timestamp: Any = ServerValue.TIMESTAMP, val photo: String? = null,
                     @get:Exclude val id: String = "", @get:Exclude val commentsCount: Int = 0) {
