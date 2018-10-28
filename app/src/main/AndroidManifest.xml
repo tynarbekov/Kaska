@@ -51,8 +51,8 @@
         <activity
             android:name=".ChatActivity"
             android:label="@string/chat_label"
-            android:theme="@style/BlueTheme"
-            ></activity>
+            android:theme="@style/BlueTheme" />
+        <activity android:name=".FollowersListActivity"></activity>
     </application>
 
 </manifest>
