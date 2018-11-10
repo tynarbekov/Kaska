@@ -5,6 +5,8 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+    <uses-feature android:name="android.hardware.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature android:name="android.hardware.READ_EXTERNAL_STORAGE" />
 
     <application
         android:name=".screens.InstagramApp"
@@ -13,6 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity android:name=".screens.home.HomeActivity">
             <intent-filter>
@@ -52,7 +55,8 @@
             android:name=".ChatActivity"
             android:label="@string/chat_label"
             android:theme="@style/BlueTheme" />
-        <activity android:name=".FollowersListActivity"></activity>
+        <activity android:name=".FollowersListActivity" />
+        <activity android:name=".CreatePostActivity"></activity>
     </application>
 
 </manifest>
