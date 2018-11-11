@@ -1,8 +1,10 @@
 package io.jachoteam.kaska.screens.home
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import io.jachoteam.kaska.ProfileViewActivity
@@ -22,7 +24,7 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
         setContentView(R.layout.activity_home)
         Log.d(TAG, "onCreate")
 
-        mAdapter = FeedAdapter(this)
+        mAdapter = FeedAdapter(this,this@HomeActivity)
         feed_recycler.adapter = mAdapter
         feed_recycler.layoutManager = LinearLayoutManager(this)
 
@@ -72,5 +74,9 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     companion object {
         const val TAG = "HomeActivity"
+
+        // feed slider
+        @SuppressLint("StaticFieldLeak")
+        lateinit var mPager: ViewPager
     }
 }
