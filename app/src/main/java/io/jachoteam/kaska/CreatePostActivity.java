@@ -151,7 +151,7 @@ public class CreatePostActivity extends BaseActivity {
 
                 Image image = new Image("image" + currentDownloadUriIndex,
                         downloadUri[currentDownloadUriIndex - 1].toString(),
-                        currentDownloadUriIndex == 1);
+                        currentDownloadUriIndex);
                 feedPost.getImages().put(image.getUid(),image);
 
                 feedPost.getImages().put(image.getUid(), image);
