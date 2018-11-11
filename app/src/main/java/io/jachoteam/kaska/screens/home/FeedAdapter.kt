@@ -1,25 +1,20 @@
 package io.jachoteam.kaska.screens.home
 
-import android.graphics.Typeface
+import android.content.Context
+import android.support.v4.view.ViewPager
 import android.support.v7.util.DiffUtil
 import android.support.v7.widget.RecyclerView
-import android.text.Spannable
-import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.TextPaint
-import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.models.FeedPost
+import io.jachoteam.kaska.models.Image
 import io.jachoteam.kaska.screens.common.*
 import kotlinx.android.synthetic.main.feed_item.view.*
 
-class FeedAdapter(private val listener: Listener)
+class FeedAdapter(private val listener: Listener,
+                  private var context: Context)
     : RecyclerView.Adapter<FeedAdapter.ViewHolder>() {
 
     interface Listener {
@@ -51,7 +46,7 @@ class FeedAdapter(private val listener: Listener)
         with(holder.view) {
             user_photo_image.loadUserPhoto(post.photo)
             username_text.text = post.username
-            post_image.loadImage(post.image)
+            init(post.images,feed_slider_pager)
             if (likes.likesCount == 0) {
                 likes_text.visibility = View.GONE
             } else {
@@ -77,4 +72,16 @@ class FeedAdapter(private val listener: Listener)
         this.posts = newPosts
         diffResult.dispatchUpdatesTo(this)
     }
+
+    private fun init(imagesMap: Map <String, Image>,sliderPager: ViewPager){
+        var imagesList: MutableList<Image> = mutableListOf()
+        imagesMap.forEach { (key, value) ->
+            run {
+                imagesList.add(value)
+            }
+        }
+        HomeActivity.mPager = sliderPager
+        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList)
+    }
+
 }
