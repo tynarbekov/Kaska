@@ -1,35 +1,43 @@
 package io.jachoteam.kaska;
 
 import android.app.ProgressDialog;
+import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+
+import io.jachoteam.kaska.data.firebase.FirebaseFeedPostsRepository;
+import io.jachoteam.kaska.data.firebase.FirebaseUsersRepository;
+import io.jachoteam.kaska.models.Comment;
+import io.jachoteam.kaska.models.FeedPost;
+import io.jachoteam.kaska.models.Image;
 import io.jachoteam.kaska.models.User;
+import io.jachoteam.kaska.screens.common.BaseActivity;
 import io.jachoteam.kaska.screens.common.CameraHelper;
 
-public class CreatePostActivity extends AppCompatActivity {
+public class CreatePostActivity extends BaseActivity {
     private static final int CAMERA_REQUEST_CODE = 1;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference userRef;
-    DatabaseReference postRef;
+    FirebaseFeedPostsRepository firebaseFeedPostsRepository = new FirebaseFeedPostsRepository();
+    FirebaseUsersRepository firebaseUsersRepository = new FirebaseUsersRepository();
     ImageView backImage;
     ImageView postImage;
     ImageView postImage1;
@@ -38,8 +46,7 @@ public class CreatePostActivity extends AppCompatActivity {
     TextView sharePost;
     User user;
     String userUid;
-    Intent intent;
-    File postFile;
+    FeedPost feedPost;
     private StorageReference mStorage;
     private ProgressDialog progressDialog;
     private CameraHelper cameraHelper;
@@ -48,20 +55,29 @@ public class CreatePostActivity extends AppCompatActivity {
     private Uri[] postImagesUri = new Uri[4];
     private Uri[] downloadUri = new Uri[4];
     private int currentDownloadUriIndex = 0;
+    private EditText captionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        firebaseUsersRepository.getUser(userUid).observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User newUser) {
+                user = newUser;
+            }
+        });
         setContentView(R.layout.activity_create_post);
         cameraHelper = new CameraHelper(this);
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         mStorage = FirebaseStorage.getInstance().getReference();
-        backImage = (ImageView) findViewById(R.id.back_image);
-        postImage = (ImageView) findViewById(R.id.post_image);
-        postImage1 = (ImageView) findViewById(R.id.post_image1);
-        postImage2 = (ImageView) findViewById(R.id.post_image2);
-        postImage3 = (ImageView) findViewById(R.id.post_image3);
-        sharePost = (TextView) findViewById(R.id.share_text);
+        backImage = findViewById(R.id.back_image);
+        postImage = findViewById(R.id.post_image);
+        postImage1 = findViewById(R.id.post_image1);
+        postImage2 = findViewById(R.id.post_image2);
+        postImage3 = findViewById(R.id.post_image3);
+        sharePost = findViewById(R.id.share_text);
+        captionText = findViewById(R.id.caption_input);
 
         progressDialog = new ProgressDialog(this);
 
@@ -75,6 +91,7 @@ public class CreatePostActivity extends AppCompatActivity {
         sharePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                feedPost = createFeedPost();
                 Log.i("Share post", "here");
                 progressDialog.setMessage("Uploading post...");
                 progressDialog.show();
@@ -132,9 +149,15 @@ public class CreatePostActivity extends AppCompatActivity {
                 downloadUri[currentDownloadUriIndex] = taskSnapshot.getDownloadUrl();
                 currentDownloadUriIndex++;
 
+                Image image = new Image("image" + currentDownloadUriIndex,
+                        downloadUri[currentDownloadUriIndex - 1].toString(),
+                        currentDownloadUriIndex == 1);
+                feedPost.getImages().put(image.getUid(),image);
+
+                feedPost.getImages().put(image.getUid(), image);
                 if (currentProgress == 100) {
                     progressDialog.dismiss();
-
+                    firebaseFeedPostsRepository.createFeedPost(userUid, feedPost);
                     // TODO SAVE TO POST MODEL
                     finish();
                 }
@@ -162,4 +185,17 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
+    private FeedPost createFeedPost() {
+        return new FeedPost(
+                userUid,
+                FirebaseAuth.getInstance().getCurrentUser().getEmail(),
+                "",
+                captionText.getText().toString(),
+                new HashMap<String, Image>(),
+                new ArrayList<Comment>(),
+                Calendar.getInstance().getTimeInMillis(),
+                user.getPhoto(),
+                "",
+                0);
+    }
 }
