@@ -82,6 +82,7 @@ class FeedAdapter(private val listener: Listener,
                 imagesList.add(value)
             }
         }
+        imagesList.sortBy { i -> i.order }
         HomeActivity.mPager = sliderPager
         HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList)
     }
