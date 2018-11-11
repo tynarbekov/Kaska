@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
+import io.jachoteam.kaska.FollowersListActivity
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.screens.addfriends.AddFriendsActivity
 import io.jachoteam.kaska.screens.common.*
@@ -40,6 +41,13 @@ class ProfileActivity : BaseActivity() {
             setupBottomNavigation(uid,4)
             val viewModel = initViewModel<ProfileViewModel>()
             viewModel.init(uid)
+
+            followers_count_text.setOnClickListener {
+                val intent = Intent(this, FollowersListActivity::class.java)
+                intent.putExtra("uid", uid);
+                startActivity(intent)
+            }
+
             viewModel.user.observe(this, Observer {
                 it?.let {
                     profile_image.loadUserPhoto(it.photo)

@@ -23,6 +23,7 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx
 import com.nhaarman.supertooltips.ToolTip
 import com.nhaarman.supertooltips.ToolTipRelativeLayout
 import com.nhaarman.supertooltips.ToolTipView
+import io.jachoteam.kaska.CreatePostActivity
 import io.jachoteam.kaska.R
 import kotlinx.android.synthetic.main.bottom_navigation_view.*
 import kotlinx.android.synthetic.main.notifications_tooltip_content.view.*
@@ -116,7 +117,7 @@ class InstagramBottomNavigation(private val uid: String,
                     when (it.itemId) {
                         R.id.nav_item_home -> HomeActivity::class.java
                         R.id.nav_item_search -> SearchActivity::class.java
-                        R.id.nav_item_share -> ShareActivity::class.java
+                        R.id.nav_item_share -> CreatePostActivity::class.java
                         R.id.nav_item_likes -> NotificationsActivity::class.java
                         R.id.nav_item_profile -> ProfileActivity::class.java
                         else -> {

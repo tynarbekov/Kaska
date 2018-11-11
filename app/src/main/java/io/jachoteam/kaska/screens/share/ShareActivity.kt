@@ -29,7 +29,7 @@ class ShareActivity : BaseActivity() {
             mFirebase = FirebaseHelper(this)
 
             mCamera = CameraHelper(this)
-            mCamera.takeCameraPicture()
+//            mCamera.takeCameraPicture()
 
             back_image.setOnClickListener { finish() }
             share_text.setOnClickListener { share() }
