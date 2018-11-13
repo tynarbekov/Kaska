@@ -15,19 +15,17 @@
 
     <ImageView
         android:id="@+id/feed_sliding_image_prev"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
         android:adjustViewBounds="true"
-        android:alpha="0.6"
         android:scaleType="centerCrop" />
 
     <ImageView
         android:id="@+id/feed_sliding_image_next"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:adjustViewBounds="true"
-        android:alpha="0.6"
         android:scaleType="centerCrop" />
 </FrameLayout>
