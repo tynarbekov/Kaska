@@ -1,35 +1,25 @@
 package io.jachoteam.kaska.screens.home
 
 import android.content.Context
-import android.os.Parcelable
 import android.support.v4.view.PagerAdapter
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.models.Image
 import io.jachoteam.kaska.screens.common.GlideApp
 
-class FeedSlidingImageAdapter : PagerAdapter {
-    private var images = listOf<Image>()
+class FeedSlidingImageAdapter(private var context: Context, private var images: List<Image>) : PagerAdapter() {
 
-    private lateinit var inflater: LayoutInflater
-    private lateinit var context: Context
+    private var inflater: LayoutInflater = LayoutInflater.from(context)
 
-    lateinit var imageView: ImageView
-    lateinit var imageViewPrev: ImageView
-    lateinit var imageViewNext: ImageView
-
-    constructor(context: Context, images: List<Image>) {
-        this.images = images
-        this.context = context
-        inflater = LayoutInflater.from(context)
-    }
-
-    constructor() : super()
+    private lateinit var imageView: ImageView
+    private lateinit var imageViewPrev: ImageView
+    private lateinit var imageViewNext: ImageView
 
     override fun getCount(): Int {
         return images.size
@@ -53,14 +43,10 @@ class FeedSlidingImageAdapter : PagerAdapter {
         updateViews(position)
 
         imageViewPrev.setOnClickListener {
-            //            updateViews(position - 1)
-            instantiateItem(view, position - 1)
-            Log.d("click", "PREV: " + position.toString())
+            TODO("change current image by clicking on previews")
         }
         imageViewNext.setOnClickListener {
-//            updateViews(position + 1)
-            instantiateItem(view, position + 1)
-            Log.d("click", "NEXT: " + position.toString())
+            TODO("change current image by clicking on previews")
         }
 
         view.addView(imageLayout, 0)
@@ -68,26 +54,33 @@ class FeedSlidingImageAdapter : PagerAdapter {
     }
 
     private fun updateViews(position: Int) {
-        Glide.with(context)
+        GlideApp.with(context)
                 .load(images[position].url)
+                .centerCrop()
+                .apply (RequestOptions.bitmapTransform(RoundedCorners(100)))
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .skipMemoryCache(false)
                 .into(imageView)
         if (position > 0) {
             GlideApp.with(context)
                     .load(images[position - 1].url)
+                    .centerCrop()
+                    .apply (RequestOptions.bitmapTransform(RoundedCorners(20)))
+                    .override(120,120)
+                    .placeholder(R.drawable.image_placeholder)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .skipMemoryCache(false)
                     .into(imageViewPrev)
         }
         if (position < images.size - 1) {
             GlideApp.with(context)
                     .load(images[position + 1].url)
+                    .centerCrop()
+                    .apply (RequestOptions.bitmapTransform(RoundedCorners(30)))
+                    .override(120,120)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .skipMemoryCache(false)
                     .into(imageViewNext)
         }
-    }
-
-    override fun restoreState(state: Parcelable?, loader: ClassLoader?) {
-        super.restoreState(state, loader)
-    }
-
-    override fun saveState(): Parcelable? {
-        return super.saveState()
     }
 }
