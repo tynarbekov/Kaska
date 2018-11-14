@@ -43,10 +43,10 @@ class FeedSlidingImageAdapter(private var context: Context, private var images: 
         updateViews(position)
 
         imageViewPrev.setOnClickListener {
-            TODO("change current image by clicking on previews")
+            // change current image by clicking on previews
         }
         imageViewNext.setOnClickListener {
-            TODO("change current image by clicking on previews")
+            // change current image by clicking on previews
         }
 
         view.addView(imageLayout, 0)
@@ -57,7 +57,7 @@ class FeedSlidingImageAdapter(private var context: Context, private var images: 
         GlideApp.with(context)
                 .load(images[position].url)
                 .centerCrop()
-                .apply (RequestOptions.bitmapTransform(RoundedCorners(100)))
+                .apply (RequestOptions.bitmapTransform(RoundedCorners(80)))
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .skipMemoryCache(false)
                 .into(imageView)
@@ -67,7 +67,6 @@ class FeedSlidingImageAdapter(private var context: Context, private var images: 
                     .centerCrop()
                     .apply (RequestOptions.bitmapTransform(RoundedCorners(20)))
                     .override(120,120)
-                    .placeholder(R.drawable.image_placeholder)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .skipMemoryCache(false)
                     .into(imageViewPrev)
@@ -76,7 +75,7 @@ class FeedSlidingImageAdapter(private var context: Context, private var images: 
             GlideApp.with(context)
                     .load(images[position + 1].url)
                     .centerCrop()
-                    .apply (RequestOptions.bitmapTransform(RoundedCorners(30)))
+                    .apply (RequestOptions.bitmapTransform(RoundedCorners(20)))
                     .override(120,120)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .skipMemoryCache(false)
