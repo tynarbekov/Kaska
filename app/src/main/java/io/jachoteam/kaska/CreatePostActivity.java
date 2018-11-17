@@ -5,7 +5,9 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -26,6 +28,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import br.com.safety.audio_recorder.AudioListener;
+import br.com.safety.audio_recorder.AudioRecordButton;
+import br.com.safety.audio_recorder.AudioRecording;
+import br.com.safety.audio_recorder.RecordingItem;
 import id.zelory.compressor.Compressor;
 import io.jachoteam.kaska.data.firebase.FirebaseFeedPostsRepository;
 import io.jachoteam.kaska.data.firebase.FirebaseUsersRepository;
@@ -35,6 +41,10 @@ import io.jachoteam.kaska.models.Image;
 import io.jachoteam.kaska.models.User;
 import io.jachoteam.kaska.screens.common.BaseActivity;
 import io.jachoteam.kaska.screens.common.CameraHelper;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class CreatePostActivity extends BaseActivity {
     private static final int CAMERA_REQUEST_CODE = 1;
@@ -59,6 +69,9 @@ public class CreatePostActivity extends BaseActivity {
     private int currentDownloadUriIndex = 0;
     private EditText captionText;
 
+    private AudioRecordButton audioRecordButton;
+    private AudioRecording audioRecording;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +93,8 @@ public class CreatePostActivity extends BaseActivity {
         postImage3 = findViewById(R.id.post_image3);
         sharePost = findViewById(R.id.share_text);
         captionText = findViewById(R.id.caption_input);
+        audioRecordButton = (AudioRecordButton) findViewById(R.id.audio_record_button);
+        audioRecording = new AudioRecording(getBaseContext());
 
         progressDialog = new ProgressDialog(this);
 
@@ -138,6 +153,32 @@ public class CreatePostActivity extends BaseActivity {
             }
         });
 
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, READ_EXTERNAL_STORAGE}, 0);
+
+        ActivityCompat.requestPermissions(this, new String[]{WRITE_EXTERNAL_STORAGE}, 0);
+
+        audioRecordButton.setOnAudioListener(new AudioListener() {
+            @Override
+            public void onStop(RecordingItem recordingItem) {
+                Toast.makeText(getBaseContext(), "Audio...", Toast.LENGTH_SHORT).show();
+                audioRecording.play(recordingItem);
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getBaseContext(), "Cancel", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.d("MainActivity", "Error: " + e.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private void uploadFile(Uri uri) {
