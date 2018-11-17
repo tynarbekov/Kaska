@@ -20,11 +20,13 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
-
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import id.zelory.compressor.Compressor;
 import io.jachoteam.kaska.data.firebase.FirebaseFeedPostsRepository;
 import io.jachoteam.kaska.data.firebase.FirebaseUsersRepository;
 import io.jachoteam.kaska.models.Comment;
@@ -139,7 +141,7 @@ public class CreatePostActivity extends BaseActivity {
     }
 
     private void uploadFile(Uri uri) {
-        StorageReference filePath = mStorage.child("users/" + userUid + "/test").child(uri.getLastPathSegment());
+        StorageReference filePath = mStorage.child("users/" + userUid + "/posts").child(uri.getLastPathSegment());
         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -152,7 +154,7 @@ public class CreatePostActivity extends BaseActivity {
                 Image image = new Image("image" + currentDownloadUriIndex,
                         downloadUri[currentDownloadUriIndex - 1].toString(),
                         currentDownloadUriIndex);
-                feedPost.getImages().put(image.getUid(),image);
+                feedPost.getImages().put(image.getUid(), image);
 
                 feedPost.getImages().put(image.getUid(), image);
                 if (currentProgress == 100) {
@@ -171,6 +173,15 @@ public class CreatePostActivity extends BaseActivity {
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK && null != cameraHelper.getImageUri()) {
 
             Uri uri = cameraHelper.getImageUri();
+            File imageFile = new File(uri.getPath());
+            File compressedImageFile = null;
+            try {
+                compressedImageFile = new Compressor(this).compressToFile(imageFile);
+                uri = Uri.fromFile(compressedImageFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             if (currentPhotoIndex == 0) {
                 Picasso.get().load(uri).into(postImage);
             } else if (currentPhotoIndex == 1) {
