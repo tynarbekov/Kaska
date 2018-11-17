@@ -56,7 +56,9 @@
             android:label="@string/chat_label"
             android:theme="@style/BlueTheme" />
         <activity android:name=".FollowersListActivity" />
-        <activity android:name=".CreatePostActivity"></activity>
+        <activity android:name=".CreatePostActivity" />
+        <activity
+            android:name=".screens.postDetails.PostDetailActivity"></activity>
     </application>
 
 </manifest>

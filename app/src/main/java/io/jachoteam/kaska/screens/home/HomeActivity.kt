@@ -1,6 +1,7 @@
 package io.jachoteam.kaska.screens.home
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
@@ -13,18 +14,22 @@ import io.jachoteam.kaska.screens.comments.CommentsActivity
 import io.jachoteam.kaska.screens.common.BaseActivity
 import io.jachoteam.kaska.screens.common.setupAuthGuard
 import io.jachoteam.kaska.screens.common.setupBottomNavigation
+import io.jachoteam.kaska.screens.postDetails.DefaultPostDetailsImpl
+import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity(), FeedAdapter.Listener {
     private lateinit var mAdapter: FeedAdapter
     private lateinit var mViewModel: HomeViewModel
 
+    private val defaultPostDetailsService: PostDetailsService = DefaultPostDetailsImpl(this)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         Log.d(TAG, "onCreate")
 
-        mAdapter = FeedAdapter(this,this@HomeActivity)
+        mAdapter = FeedAdapter(this,this@HomeActivity, defaultPostDetailsService)
         feed_recycler.adapter = mAdapter
         feed_recycler.layoutManager = LinearLayoutManager(this)
 
@@ -70,6 +75,10 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     override fun openComments(postId: String) {
         mViewModel.openComments(postId)
+    }
+
+    override fun openPostDetails(postId: String) {
+
     }
 
     companion object {

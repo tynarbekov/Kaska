@@ -196,6 +196,7 @@ public class CreatePostActivity extends BaseActivity {
                 Calendar.getInstance().getTimeInMillis(),
                 user.getPhoto(),
                 "",
-                0);
+                0,
+                "");
     }
 }

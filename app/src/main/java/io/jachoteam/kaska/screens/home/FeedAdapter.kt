@@ -11,10 +11,12 @@ import io.jachoteam.kaska.R
 import io.jachoteam.kaska.models.FeedPost
 import io.jachoteam.kaska.models.Image
 import io.jachoteam.kaska.screens.common.*
+import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 import kotlinx.android.synthetic.main.feed_item.view.*
 
 class FeedAdapter(private val listener: Listener,
-                  private var context: Context)
+                  private var context: Context,
+                  private val postDetailsService: PostDetailsService)
     : RecyclerView.Adapter<FeedAdapter.ViewHolder>() {
 
     interface Listener {
@@ -22,6 +24,7 @@ class FeedAdapter(private val listener: Listener,
         fun loadLikes(postId: String, position: Int)
         fun openComments(postId: String)
         fun openProfile(username: String, uid: String)
+        fun openPostDetails(postId: String)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -47,7 +50,7 @@ class FeedAdapter(private val listener: Listener,
         with(holder.view) {
             user_photo_image.loadUserPhoto(post.photo)
             username_text.text = post.username
-            init(post.images,feed_slider_pager)
+            init(post.images, feed_slider_pager, post.postId)
             if (likes.likesCount == 0) {
                 likes_text.visibility = View.GONE
             } else {
@@ -75,7 +78,7 @@ class FeedAdapter(private val listener: Listener,
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun init(imagesMap: Map <String, Image>,sliderPager: ViewPager){
+    private fun init(imagesMap: Map<String, Image>, sliderPager: ViewPager, postId: String) {
         var imagesList: MutableList<Image> = mutableListOf()
         imagesMap.forEach { (key, value) ->
             run {
@@ -84,7 +87,7 @@ class FeedAdapter(private val listener: Listener,
         }
         imagesList.sortBy { i -> i.order }
         HomeActivity.mPager = sliderPager
-        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList)
+        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList, postDetailsService, postId)
     }
 
 }
