@@ -5,9 +5,13 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,6 +30,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
+import cafe.adriel.androidaudiorecorder.model.AudioChannel;
+import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
+import cafe.adriel.androidaudiorecorder.model.AudioSource;
 import id.zelory.compressor.Compressor;
 import io.jachoteam.kaska.data.firebase.FirebaseFeedPostsRepository;
 import io.jachoteam.kaska.data.firebase.FirebaseUsersRepository;
@@ -36,8 +44,14 @@ import io.jachoteam.kaska.models.User;
 import io.jachoteam.kaska.screens.common.BaseActivity;
 import io.jachoteam.kaska.screens.common.CameraHelper;
 
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.RECORD_AUDIO;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
 public class CreatePostActivity extends BaseActivity {
     private static final int CAMERA_REQUEST_CODE = 1;
+    private static final int AUDIO_REQUEST_CODE = 200;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     FirebaseFeedPostsRepository firebaseFeedPostsRepository = new FirebaseFeedPostsRepository();
     FirebaseUsersRepository firebaseUsersRepository = new FirebaseUsersRepository();
     ImageView backImage;
@@ -45,6 +59,7 @@ public class CreatePostActivity extends BaseActivity {
     ImageView postImage1;
     ImageView postImage2;
     ImageView postImage3;
+    Button recordAudioButton;
     TextView sharePost;
     User user;
     String userUid;
@@ -58,6 +73,11 @@ public class CreatePostActivity extends BaseActivity {
     private Uri[] downloadUri = new Uri[4];
     private int currentDownloadUriIndex = 0;
     private EditText captionText;
+    private boolean permissionToRecordAccepted = false;
+    private String[] permissions = {WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, READ_EXTERNAL_STORAGE};
+    public String audioFilePath="";
+    public Uri audioUri=null;
+    public Uri audioDownloadUri=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +100,7 @@ public class CreatePostActivity extends BaseActivity {
         postImage3 = findViewById(R.id.post_image3);
         sharePost = findViewById(R.id.share_text);
         captionText = findViewById(R.id.caption_input);
+        recordAudioButton = findViewById(R.id.record_audio_button);
 
         progressDialog = new ProgressDialog(this);
 
@@ -90,6 +111,17 @@ public class CreatePostActivity extends BaseActivity {
             }
         });
 
+        recordAudioButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                recordAudioFromMic();
+
+//                Intent recordAudioIntent = new Intent(getApplicationContext(), RecordAudioActivity.class);
+//                startActivityForResult(recordAudioIntent, AUDIO_REQUEST_CODE);
+            }
+        });
+
         sharePost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +129,9 @@ public class CreatePostActivity extends BaseActivity {
                 Log.i("Share post", "here");
                 progressDialog.setMessage("Uploading post...");
                 progressDialog.show();
+
+                uploadAudioFile();
+
                 for (int i = 0; i < postImagesUri.length; i++) {
                     if (null != postImagesUri[i]) {
                         uploadFile(postImagesUri[i]);
@@ -140,6 +175,37 @@ public class CreatePostActivity extends BaseActivity {
 
     }
 
+    private void uploadAudioFile() {
+        StorageReference filePath = mStorage.child("users/" + userUid + "/audios").child(audioUri.getLastPathSegment());
+        filePath.putFile(audioUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Toast.makeText(CreatePostActivity.this, "Uploading audio finished!", Toast.LENGTH_LONG).show();
+                audioDownloadUri = taskSnapshot.getDownloadUrl();
+                audioFilePath = audioDownloadUri.toString();
+            }
+        });
+    }
+
+    private void recordAudioFromMic() {
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+        audioFilePath = Environment.getExternalStorageDirectory() + "/recorded_audio.wav";
+        int color = getResources().getColor(R.color.colorPrimaryDark);
+        AndroidAudioRecorder.with(this)
+                // Required
+                .setFilePath(audioFilePath)
+                .setColor(color)
+                .setRequestCode(REQUEST_RECORD_AUDIO_PERMISSION)
+                // Optional
+                .setSource(AudioSource.MIC)
+                .setChannel(AudioChannel.STEREO)
+                .setSampleRate(AudioSampleRate.HZ_16000)
+                .setAutoStart(false)
+                .setKeepDisplayOn(true)
+                .record();
+    }
+
     private void uploadFile(Uri uri) {
         StorageReference filePath = mStorage.child("users/" + userUid + "/posts").child(uri.getLastPathSegment());
         filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -161,7 +227,7 @@ public class CreatePostActivity extends BaseActivity {
                     progressDialog.dismiss();
                     firebaseFeedPostsRepository.createFeedPost(userUid, feedPost);
                     // TODO SAVE TO POST MODEL
-                    finish();
+//                    finish();
                 }
             }
         });
@@ -193,7 +259,15 @@ public class CreatePostActivity extends BaseActivity {
             }
 
             postImagesUri[currentPhotoIndex] = uri;
+        } else if (requestCode == AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
+            Log.i("audio", "recorded successfully");
+            audioUri = Uri.fromFile(new File(audioFilePath));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     private FeedPost createFeedPost() {
@@ -207,6 +281,7 @@ public class CreatePostActivity extends BaseActivity {
                 Calendar.getInstance().getTimeInMillis(),
                 user.getPhoto(),
                 "",
-                0);
+                0,
+                audioFilePath);
     }
 }
