@@ -121,12 +121,12 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
     }
 
     private fun initViews() {
-        userImageView = listener.getActivity().findViewById(R.id.user_photo_image)
-        userNameTextView = listener.getActivity().findViewById(R.id.username_text)
-        likeImageView = listener.getActivity().findViewById(R.id.like_image)
-        commentImageView = listener.getActivity().findViewById(R.id.comment_image)
-        shareImageView = listener.getActivity().findViewById(R.id.share_image)
-        likeTextView = listener.getActivity().findViewById(R.id.likes_text)
-        captionTextView = listener.getActivity().findViewById(R.id.caption_text)
+        userImageView = listener.getActivity().findViewById(R.id.post_user_photo_image)
+        userNameTextView = listener.getActivity().findViewById(R.id.post_username_text)
+        likeImageView = listener.getActivity().findViewById(R.id.post_like_image)
+        commentImageView = listener.getActivity().findViewById(R.id.post_comment_image)
+        shareImageView = listener.getActivity().findViewById(R.id.post_share_image)
+        likeTextView = listener.getActivity().findViewById(R.id.post_likes_text)
+        captionTextView = listener.getActivity().findViewById(R.id.post_caption_text)
     }
 }
