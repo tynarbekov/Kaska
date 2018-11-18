@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -26,9 +28,13 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
 import cafe.adriel.androidaudiorecorder.model.AudioChannel;
@@ -52,6 +58,10 @@ public class CreatePostActivity extends BaseActivity {
     private static final int CAMERA_REQUEST_CODE = 1;
     private static final int AUDIO_REQUEST_CODE = 200;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    public String audioFilePath = "";
+    public Uri audioUri = null;
+    public Uri audioDownloadUri = null;
+    public List<Task<Uri>> taskArrayList = new ArrayList<>();
     FirebaseFeedPostsRepository firebaseFeedPostsRepository = new FirebaseFeedPostsRepository();
     FirebaseUsersRepository firebaseUsersRepository = new FirebaseUsersRepository();
     ImageView backImage;
@@ -64,6 +74,7 @@ public class CreatePostActivity extends BaseActivity {
     User user;
     String userUid;
     FeedPost feedPost;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
     private StorageReference mStorage;
     private ProgressDialog progressDialog;
     private CameraHelper cameraHelper;
@@ -75,9 +86,6 @@ public class CreatePostActivity extends BaseActivity {
     private EditText captionText;
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, READ_EXTERNAL_STORAGE};
-    public String audioFilePath="";
-    public Uri audioUri=null;
-    public Uri audioDownloadUri=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,11 +122,7 @@ public class CreatePostActivity extends BaseActivity {
         recordAudioButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 recordAudioFromMic();
-
-//                Intent recordAudioIntent = new Intent(getApplicationContext(), RecordAudioActivity.class);
-//                startActivityForResult(recordAudioIntent, AUDIO_REQUEST_CODE);
             }
         });
 
@@ -130,15 +134,25 @@ public class CreatePostActivity extends BaseActivity {
                 progressDialog.setMessage("Uploading post...");
                 progressDialog.show();
 
-                uploadAudioFile();
+                if (audioUri != null) {
+                    taskArrayList.add(uploadAudioFile());
+                }
 
                 for (int i = 0; i < postImagesUri.length; i++) {
                     if (null != postImagesUri[i]) {
-                        uploadFile(postImagesUri[i]);
-                    } else {
-                        currentProgress += 25;
+                        taskArrayList.add(uploadFile(postImagesUri[i]));
                     }
                 }
+
+                Tasks.whenAllSuccess(taskArrayList).addOnCompleteListener(new OnCompleteListener<List<Object>>() {
+                    @Override
+                    public void onComplete(@NonNull Task<List<Object>> task) {
+                        Log.i("tasksuccess", "YEAA");
+                        List<Object> downloadUriList = task.getResult();
+                        progressDialog.dismiss();
+                    }
+                });
+
             }
         });
 
@@ -175,14 +189,30 @@ public class CreatePostActivity extends BaseActivity {
 
     }
 
-    private void uploadAudioFile() {
-        StorageReference filePath = mStorage.child("users/" + userUid + "/audios").child(audioUri.getLastPathSegment());
-        filePath.putFile(audioUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    private Task<Uri> uploadAudioFile() {
+        final StorageReference ref = mStorage.child("users/" + userUid + "/audios").child(audioUri.getLastPathSegment());
+        UploadTask uploadTask = ref.putFile(audioUri);
+
+        return uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(CreatePostActivity.this, "Uploading audio finished!", Toast.LENGTH_LONG).show();
-                audioDownloadUri = taskSnapshot.getDownloadUrl();
-                audioFilePath = audioDownloadUri.toString();
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    Log.i("tasksuccess-audio", downloadUri.getPathSegments().toString());
+                } else {
+                    // Handle failures
+                    // ...
+                }
             }
         });
     }
@@ -190,7 +220,7 @@ public class CreatePostActivity extends BaseActivity {
     private void recordAudioFromMic() {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
 
-        audioFilePath = Environment.getExternalStorageDirectory() + "/recorded_audio.wav";
+        audioFilePath = Environment.getExternalStorageDirectory() + "/" + simpleDateFormat.format(new Date()) + ".wav";
         int color = getResources().getColor(R.color.colorPrimaryDark);
         AndroidAudioRecorder.with(this)
                 // Required
@@ -206,28 +236,28 @@ public class CreatePostActivity extends BaseActivity {
                 .record();
     }
 
-    private void uploadFile(Uri uri) {
-        StorageReference filePath = mStorage.child("users/" + userUid + "/posts").child(uri.getLastPathSegment());
-        filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+    private Task<Uri> uploadFile(Uri uri) {
+        final StorageReference ref = mStorage.child("users/" + userUid + "/posts").child(uri.getLastPathSegment());
+        UploadTask uploadTask = ref.putFile(uri);
+        return uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Toast.makeText(CreatePostActivity.this, "Uploading finished!", Toast.LENGTH_LONG).show();
-                currentProgress += 25;
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
 
-                downloadUri[currentDownloadUriIndex] = taskSnapshot.getDownloadUrl();
-                currentDownloadUriIndex++;
-
-                Image image = new Image("image" + currentDownloadUriIndex,
-                        downloadUri[currentDownloadUriIndex - 1].toString(),
-                        currentDownloadUriIndex);
-                feedPost.getImages().put(image.getUid(), image);
-
-                feedPost.getImages().put(image.getUid(), image);
-                if (currentProgress == 100) {
-                    progressDialog.dismiss();
-                    firebaseFeedPostsRepository.createFeedPost(userUid, feedPost);
-                    // TODO SAVE TO POST MODEL
-//                    finish();
+                // Continue with the task to get the download URL
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    Log.i("tasksuccess-VIDEO", downloadUri.getPathSegments().toString());
+                } else {
+                    // Handle failures
+                    // ...
                 }
             }
         });
