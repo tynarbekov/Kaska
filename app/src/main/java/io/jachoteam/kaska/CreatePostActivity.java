@@ -56,7 +56,6 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class CreatePostActivity extends BaseActivity {
     private static final int CAMERA_REQUEST_CODE = 1;
-    private static final int AUDIO_REQUEST_CODE = 200;
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     public String audioFilePath = "";
     public Uri audioUri = null;
@@ -224,21 +223,6 @@ public class CreatePostActivity extends BaseActivity {
 
     private void recordAudioFromMic() {
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
-
-        audioFilePath = Environment.getExternalStorageDirectory() + "/" + simpleDateFormat.format(new Date()) + ".wav";
-        int color = getResources().getColor(R.color.colorPrimaryDark);
-        AndroidAudioRecorder.with(this)
-                // Required
-                .setFilePath(audioFilePath)
-                .setColor(color)
-                .setRequestCode(REQUEST_RECORD_AUDIO_PERMISSION)
-                // Optional
-                .setSource(AudioSource.MIC)
-                .setChannel(AudioChannel.STEREO)
-                .setSampleRate(AudioSampleRate.HZ_16000)
-                .setAutoStart(false)
-                .setKeepDisplayOn(true)
-                .record();
     }
 
     /**
@@ -298,6 +282,7 @@ public class CreatePostActivity extends BaseActivity {
 
             Uri uri = cameraHelper.getImageUri();
             File imageFile = new File(uri.getPath());
+            File abc = new File(String.valueOf(uri));
             File compressedImageFile = null;
             try {
                 compressedImageFile = new Compressor(this).setQuality(50).compressToFile(imageFile);
@@ -318,7 +303,7 @@ public class CreatePostActivity extends BaseActivity {
             }
 
             postImagesUri[currentPhotoIndex] = uri;
-        } else if (requestCode == AUDIO_REQUEST_CODE && resultCode == RESULT_OK) {
+        } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION && resultCode == RESULT_OK) {
             Log.i("audio", "recorded successfully");
             audioUri = Uri.fromFile(new File(audioFilePath));
         }
@@ -327,6 +312,25 @@ public class CreatePostActivity extends BaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_RECORD_AUDIO_PERMISSION: {
+                audioFilePath = Environment.getExternalStorageDirectory() + "/" + simpleDateFormat.format(new Date()) + ".wav";
+                int color = getResources().getColor(R.color.colorPrimaryDark);
+                AndroidAudioRecorder.with(this)
+                        // Required
+                        .setFilePath(audioFilePath)
+                        .setColor(color)
+                        .setRequestCode(REQUEST_RECORD_AUDIO_PERMISSION)
+                        // Optional
+                        .setSource(AudioSource.MIC)
+                        .setChannel(AudioChannel.STEREO)
+                        .setSampleRate(AudioSampleRate.HZ_16000)
+                        .setAutoStart(false)
+                        .setKeepDisplayOn(true)
+                        .record();
+                return;
+            }
+        }
     }
 
     private FeedPost createFeedPost() {
