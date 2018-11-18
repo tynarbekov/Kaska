@@ -74,6 +74,9 @@ public class CreatePostActivity extends BaseActivity {
     User user;
     String userUid;
     FeedPost feedPost;
+    private String AUDIO = "audio";
+    private String VIDEO = "video";
+    private String PHOTO = "PHOTO";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US);
     private StorageReference mStorage;
     private ProgressDialog progressDialog;
@@ -135,12 +138,13 @@ public class CreatePostActivity extends BaseActivity {
                 progressDialog.show();
 
                 if (audioUri != null) {
-                    taskArrayList.add(uploadAudioFile());
+                    taskArrayList.add(uploadFile(audioUri, AUDIO, 0));
                 }
 
                 for (int i = 0; i < postImagesUri.length; i++) {
                     if (null != postImagesUri[i]) {
-                        taskArrayList.add(uploadFile(postImagesUri[i]));
+                        taskArrayList.add(uploadFile(postImagesUri[i], PHOTO, currentDownloadUriIndex));
+                        currentDownloadUriIndex++;
                     }
                 }
 
@@ -149,6 +153,7 @@ public class CreatePostActivity extends BaseActivity {
                     public void onComplete(@NonNull Task<List<Object>> task) {
                         Log.i("tasksuccess", "YEAA");
                         List<Object> downloadUriList = task.getResult();
+                        firebaseFeedPostsRepository.createFeedPost(userUid, feedPost);
                         progressDialog.dismiss();
                     }
                 });
@@ -236,16 +241,30 @@ public class CreatePostActivity extends BaseActivity {
                 .record();
     }
 
-    private Task<Uri> uploadFile(Uri uri) {
-        final StorageReference ref = mStorage.child("users/" + userUid + "/posts").child(uri.getLastPathSegment());
+    /**
+     * @param uri
+     * @param TYPE
+     * @param index
+     * @return
+     */
+    private Task<Uri> uploadFile(Uri uri, final String TYPE, final int index) {
+
+        String link = "users/" + userUid;
+        if (TYPE.equals(PHOTO)) {
+            link += "/pictures";
+        } else if (TYPE.equals(AUDIO)) {
+            link += "/audios";
+        }
+
+        final StorageReference ref = mStorage.child(link).child(uri.getLastPathSegment());
         UploadTask uploadTask = ref.putFile(uri);
+
         return uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
             @Override
             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                 if (!task.isSuccessful()) {
                     throw task.getException();
                 }
-
                 // Continue with the task to get the download URL
                 return ref.getDownloadUrl();
             }
@@ -253,11 +272,20 @@ public class CreatePostActivity extends BaseActivity {
             @Override
             public void onComplete(@NonNull Task<Uri> task) {
                 if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    Log.i("tasksuccess-VIDEO", downloadUri.getPathSegments().toString());
+                    Uri uri = task.getResult();
+
+                    if (TYPE.equals(PHOTO)) {
+                        Image image = new Image("image" + index,
+                                uri.toString(),
+                                index);
+                        Log.i("image", image.toString());
+                        feedPost.getImages().put(image.getUid(), image);
+                    } else if (TYPE.equals(AUDIO)) {
+                        feedPost.setAudioUrl(uri.toString());
+                    }
+
                 } else {
-                    // Handle failures
-                    // ...
+                    Log.i("ERROR UPLOADING", TYPE);
                 }
             }
         });
@@ -272,8 +300,9 @@ public class CreatePostActivity extends BaseActivity {
             File imageFile = new File(uri.getPath());
             File compressedImageFile = null;
             try {
-                compressedImageFile = new Compressor(this).compressToFile(imageFile);
+                compressedImageFile = new Compressor(this).setQuality(50).compressToFile(imageFile);
                 uri = Uri.fromFile(compressedImageFile);
+                Log.i("Image compressed", uri.toString());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -312,6 +341,6 @@ public class CreatePostActivity extends BaseActivity {
                 user.getPhoto(),
                 "",
                 0,
-                audioFilePath);
+                "");
     }
 }
