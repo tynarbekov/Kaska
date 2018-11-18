@@ -18,6 +18,7 @@ import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 class FeedSlidingImageAdapter(private var context: Context,
                               private var images: List<Image>,
                               private var postDetailsService: PostDetailsService,
+                              private var postUserId: String,
                               private var postId: String) : PagerAdapter() {
 
     private var inflater: LayoutInflater = LayoutInflater.from(context)
@@ -48,7 +49,8 @@ class FeedSlidingImageAdapter(private var context: Context,
         updateViews(position)
 
         imageView.setOnClickListener {
-            postDetailsService.openPostDetails(postId)
+
+            postDetailsService.openPostDetails(postUserId, postId)
             Log.d("Click: ", postId)
         }
         imageViewPrev.setOnClickListener {

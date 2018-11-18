@@ -24,7 +24,6 @@ class FeedAdapter(private val listener: Listener,
         fun loadLikes(postId: String, position: Int)
         fun openComments(postId: String)
         fun openProfile(username: String, uid: String)
-        fun openPostDetails(postId: String)
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view)
@@ -50,7 +49,7 @@ class FeedAdapter(private val listener: Listener,
         with(holder.view) {
             user_photo_image.loadUserPhoto(post.photo)
             username_text.text = post.username
-            init(post.images, feed_slider_pager, post.postId)
+            init(post.images, feed_slider_pager, post.uid, post.id)
             if (likes.likesCount == 0) {
                 likes_text.visibility = View.GONE
             } else {
@@ -78,7 +77,7 @@ class FeedAdapter(private val listener: Listener,
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun init(imagesMap: Map<String, Image>, sliderPager: ViewPager, postId: String) {
+    private fun init(imagesMap: Map<String, Image>, sliderPager: ViewPager, postUserId: String, postId: String) {
         var imagesList: MutableList<Image> = mutableListOf()
         imagesMap.forEach { (key, value) ->
             run {
@@ -87,7 +86,7 @@ class FeedAdapter(private val listener: Listener,
         }
         imagesList.sortBy { i -> i.order }
         HomeActivity.mPager = sliderPager
-        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList, postDetailsService, postId)
+        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList, postDetailsService, postUserId, postId)
     }
 
 }

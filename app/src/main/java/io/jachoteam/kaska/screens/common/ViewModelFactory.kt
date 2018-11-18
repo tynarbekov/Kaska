@@ -15,6 +15,8 @@ import io.jachoteam.kaska.screens.register.RegisterViewModel
 import io.jachoteam.kaska.screens.search.SearchViewModel
 import io.jachoteam.kaska.screens.share.ShareViewModel
 import com.google.android.gms.tasks.OnFailureListener
+import io.jachoteam.kaska.data.FeedPostsRepository
+import io.jachoteam.kaska.screens.postDetails.PostDetailsViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val app: InstagramApp,
@@ -49,6 +51,8 @@ class ViewModelFactory(private val app: InstagramApp,
             return NotificationsViewModel(notificationsRepo, onFailureListener) as T
         } else if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
             return SearchViewModel(searchRepo, onFailureListener) as T
+        } else if (modelClass.isAssignableFrom(PostDetailsViewModel::class.java)) {
+            return PostDetailsViewModel(onFailureListener, feedPostsRepo) as T
         } else {
             error("Unknown view model class $modelClass")
         }

@@ -15,6 +15,7 @@ import io.jachoteam.kaska.screens.common.BaseActivity
 import io.jachoteam.kaska.screens.common.setupAuthGuard
 import io.jachoteam.kaska.screens.common.setupBottomNavigation
 import io.jachoteam.kaska.screens.postDetails.DefaultPostDetailsImpl
+import io.jachoteam.kaska.screens.postDetails.PostDetailActivity
 import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 import kotlinx.android.synthetic.main.activity_home.*
 
@@ -75,10 +76,6 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     override fun openComments(postId: String) {
         mViewModel.openComments(postId)
-    }
-
-    override fun openPostDetails(postId: String) {
-
     }
 
     companion object {
