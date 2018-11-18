@@ -3,6 +3,7 @@ package io.jachoteam.kaska;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.Observer;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mvc.imagepicker.ImagePicker;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -92,6 +94,8 @@ public class CreatePostActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ImagePicker.setMinQuality(600, 600);
         userUid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         firebaseUsersRepository.getUser(userUid).observe(this, new Observer<User>() {
             @Override
@@ -165,7 +169,8 @@ public class CreatePostActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 currentPhotoIndex = 0;
-                cameraHelper.takeCameraPicture();
+//                cameraHelper.takeCameraPicture();
+                onPickImage();
             }
         });
 
@@ -191,6 +196,11 @@ public class CreatePostActivity extends BaseActivity {
             }
         });
 
+    }
+
+    public void onPickImage() {
+        // Click on image button
+        ImagePicker.pickImage(this, "Select your image:");
     }
 
     private Task<Uri> uploadAudioFile() {
@@ -306,6 +316,9 @@ public class CreatePostActivity extends BaseActivity {
         } else if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION && resultCode == RESULT_OK) {
             Log.i("audio", "recorded successfully");
             audioUri = Uri.fromFile(new File(audioFilePath));
+        } else {
+            Bitmap bitmap = ImagePicker.getImageFromResult(this, requestCode, resultCode, data);
+            Log.i("BITMAP", "image picked");
         }
     }
 

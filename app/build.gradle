@@ -68,6 +68,8 @@ dependencies {
 
     implementation 'com.github.adrielcafe:AndroidAudioRecorder:0.3.0'
 
+    implementation 'com.github.Mariovc:ImagePicker:1.2.2'
+
 //    Compress post images
     implementation 'id.zelory:compressor:2.1.0'
     kapt 'com.github.bumptech.glide:compiler:4.7.1'
