@@ -336,6 +336,9 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
             address = place.getAddress().toString();
             latitude = place.getLatLng().latitude;
             longitude = place.getLatLng().longitude;
+            Log.i("PLACE_PICKED", address);
+            Log.i("PLACE_PICKED", latitude + "");
+            Log.i("PLACE_PICKED", longitude + "");
         }
     }
 
@@ -375,6 +378,9 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
                 user.getPhoto(),
                 "",
                 0,
-                "");
+                "",
+                address,
+                longitude,
+                latitude);
     }
 }
