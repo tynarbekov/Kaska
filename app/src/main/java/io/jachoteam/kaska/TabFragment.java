@@ -1,19 +1,30 @@
 package io.jachoteam.kaska;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import java.util.List;
 
 import io.jachoteam.kaska.dummy.DummyContent;
 import io.jachoteam.kaska.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import io.jachoteam.kaska.retrofit.CustomAdapter;
+import io.jachoteam.kaska.retrofit.GetDataService;
+import io.jachoteam.kaska.retrofit.RetroPhoto;
+import io.jachoteam.kaska.retrofit.RetrofitClientInstance;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * A fragment representing a list of Items.
@@ -25,9 +36,13 @@ public class TabFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
+    public Activity parentActivity = (ProfileViewActivity) getActivity();
+    ProgressDialog progressDoalog;
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private CustomAdapter adapter;
+    private RecyclerView recyclerView;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,6 +68,36 @@ public class TabFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
+
+        /*Create handle for the RetrofitInstance interface*/
+        GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
+
+        Call<List<RetroPhoto>> call = service.getAllPhotos();
+        call.enqueue(new Callback<List<RetroPhoto>>() {
+
+            @Override
+            public void onResponse(Call<List<RetroPhoto>> call, Response<List<RetroPhoto>> response) {
+//                progressDoalog.dismiss();
+                generateDataList(response.body());
+                Log.i("RESPONSE_DATA", response.body().toArray().toString());
+            }
+
+            @Override
+            public void onFailure(Call<List<RetroPhoto>> call, Throwable t) {
+                progressDoalog.dismiss();
+                Toast.makeText(parentActivity, "Something went wrong...Please try later!", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+    /*Method to generate List of data using RecyclerView with custom adapter*/
+    private void generateDataList(List<RetroPhoto> photoList) {
+        recyclerView = (RecyclerView) getView().findViewById(R.id.customRecyclerView);
+        adapter = new CustomAdapter(parentActivity, photoList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(parentActivity);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override

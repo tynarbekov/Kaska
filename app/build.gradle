@@ -63,6 +63,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services:12.0.1'
     //    Android Location picker lib
     //    implementation 'com.schibstedspain.android:leku:5.1.1'
+    implementation  'com.squareup.retrofit2:retrofit:2.5.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+
     implementation 'com.github.jrvansuita:PickImage:2.2.4'
     //    Compress post images
     implementation 'id.zelory:compressor:2.1.0'

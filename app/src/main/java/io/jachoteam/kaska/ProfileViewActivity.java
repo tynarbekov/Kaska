@@ -27,6 +27,8 @@ import io.jachoteam.kaska.screens.common.GlideApp;
 public class ProfileViewActivity extends AppCompatActivity implements TabFragment.OnListFragmentInteractionListener,
         Tab2Fragment.OnFragmentInteractionListener, Tab3Fragment.OnFragmentInteractionListener{
     public String uid;
+
+
     public String username;
     String TAG = "ProfileViewActivity";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
