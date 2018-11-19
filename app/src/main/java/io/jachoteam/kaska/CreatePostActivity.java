@@ -17,6 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -74,10 +78,12 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
     ImageView postImage2;
     ImageView postImage3;
     Button recordAudioButton;
+    Button pickLocationButton;
     TextView sharePost;
     User user;
     String userUid;
     FeedPost feedPost;
+    int PLACE_PICKER_REQUEST = 1;
     private String AUDIO = "audio";
     private String VIDEO = "video";
     private String PHOTO = "PHOTO";
@@ -116,6 +122,7 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
         sharePost = findViewById(R.id.share_text);
         captionText = findViewById(R.id.caption_input);
         recordAudioButton = findViewById(R.id.record_audio_button);
+        pickLocationButton = findViewById(R.id.pick_location_button);
 
         sharePost.setEnabled(false);
 
@@ -132,6 +139,13 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
             @Override
             public void onClick(View v) {
                 recordAudioFromMic();
+            }
+        });
+
+        pickLocationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickLocation();
             }
         });
 
@@ -201,6 +215,17 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
             }
         });
 
+    }
+
+    private void pickLocation() {
+        PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+        try {
+            startActivityForResult(builder.build(this), PLACE_PICKER_REQUEST);
+        } catch (GooglePlayServicesRepairableException e) {
+            e.printStackTrace();
+        } catch (GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -301,6 +326,11 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
         if (requestCode == REQUEST_RECORD_AUDIO_PERMISSION && resultCode == RESULT_OK) {
             Log.i("audio", "recorded successfully");
             audioUri = Uri.fromFile(new File(audioFilePath));
+        } else if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
+            Place place = PlacePicker.getPlace(this, data);
+            String placeName = String.format("Place: %s", place.getName());
+            double latitude = place.getLatLng().latitude;
+            double longitude = place.getLatLng().longitude;
         }
     }
 

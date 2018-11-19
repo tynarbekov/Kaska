@@ -90,6 +90,12 @@
             android:layout_height="wrap_content"
             android:text="Record Audio" />
 
+        <Button
+            android:id="@+id/pick_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick Location" />
+
         <EditText
             android:id="@+id/caption_input"
             style="@style/Widget.AppCompat.EditText"
