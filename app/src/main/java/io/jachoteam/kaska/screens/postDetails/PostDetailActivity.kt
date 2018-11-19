@@ -3,19 +3,20 @@ package io.jachoteam.kaska.screens.postDetails
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
+import android.support.design.widget.TabLayout
 import android.util.Log
 import io.jachoteam.kaska.ProfileViewActivity
 import io.jachoteam.kaska.R
-import io.jachoteam.kaska.common.SingleLiveEvent
 import io.jachoteam.kaska.screens.comments.CommentsActivity
 import io.jachoteam.kaska.screens.common.BaseActivity
 import io.jachoteam.kaska.screens.common.setupAuthGuard
 import io.jachoteam.kaska.screens.common.setupBottomNavigation
 import io.jachoteam.kaska.screens.home.HomeActivity
 
-import kotlinx.android.synthetic.main.activity_post_detail.*
+import android.support.v4.view.ViewPager
+import android.support.v7.widget.Toolbar
+import android.view.View
+
 
 class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
@@ -25,16 +26,26 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
     private lateinit var userId: String
     private lateinit var mViewModel: PostDetailsViewModel
 
+    private lateinit var postDetailsSectionPageAdapter: PostDetailsSectionPageAdapter
+    private lateinit var postDetailsViewPager: ViewPager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_detail)
+        val toolbar = findViewById<View>(R.id.toolbar) as Toolbar
         setSupportActionBar(toolbar)
         postId = intent.getStringExtra("postId")
         userId = intent.getStringExtra("userId")
 
-        Log.d("test->PostDetailAct", "this.userId: $userId")
-        Log.d("test->PostDetailAct", "this.postId: $postId")
-        log(postId)
+        postDetailsSectionPageAdapter = PostDetailsSectionPageAdapter(supportFragmentManager)
+
+        postDetailsViewPager = findViewById(R.id.post_details_section_page_container)
+        setupViewPager(postDetailsViewPager)
+
+        var tabLayout = findViewById<TabLayout>(R.id.section_tabs)
+        tabLayout.setupWithViewPager(postDetailsViewPager)
+        var section_tabs_toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar);
 
         setupAuthGuard { uid ->
             setupBottomNavigation(uid, 0)
@@ -55,11 +66,9 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
     }
 
     override fun loadLikes() {
-//        if (mViewModel.getLikes() == null) {
-            mViewModel.loadLikes(postId).observe(this, Observer {
-                it?.let { feedPostLikes -> mViewModel.updatePostLikes(feedPostLikes) }
-            })
-//        }
+        mViewModel.loadLikes(postId).observe(this, Observer {
+            it?.let { feedPostLikes -> mViewModel.updatePostLikes(feedPostLikes) }
+        })
     }
 
     override fun openComments() {
@@ -73,8 +82,8 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
     override fun openProfile(username: String, uid: String) {
         Log.d(HomeActivity.TAG, "VIEW PROFILE: $username, $uid")
         val profileIntent = Intent(this, ProfileViewActivity::class.java)
-        profileIntent.putExtra("uid", uid);
-        profileIntent.putExtra("username", username);
+        profileIntent.putExtra("uid", uid)
+        profileIntent.putExtra("username", username)
         startActivity(profileIntent)
     }
 
@@ -85,4 +94,11 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
         Log.d(TAG, "postId: $text")
     }
 
+    private fun setupViewPager(viewPager: ViewPager) {
+        val adapter = PostDetailsSectionPageAdapter(supportFragmentManager)
+        adapter.addFragment(PostDetailsSlidesFragment(), "Images")
+        adapter.addFragment(PostDetailsVideoFragment(), "Video")
+        adapter.addFragment(PostDetailsVoiceFragment(), "Voice")
+        viewPager.adapter = adapter
+    }
 }
