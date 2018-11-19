@@ -1,5 +1,5 @@
 <resources>
-    <string name="google_maps_api_key">AIzaSyD6FZ4JJFhezud7yKahDX1pXq2eLJRjIRs</string>
+    <string name="google_maps_api_key">AIzaSyAZi_Lt0zqRtgUZ9VQAw8EYjGOo3FWLB6E</string>
     <string name="app_name">Kaska</string>
     <string name="create_account">Don\'t have an account? <b>Sign up.</b></string>
     <string name="reset_password">Reset Password?</string>

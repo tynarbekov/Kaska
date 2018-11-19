@@ -100,6 +100,11 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
     private boolean permissionToRecordAccepted = false;
     private String[] permissions = {WRITE_EXTERNAL_STORAGE, RECORD_AUDIO, READ_EXTERNAL_STORAGE};
 
+    private double latitude = 0;
+    private double longitude = 0;
+    private String address = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -328,9 +333,9 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
             audioUri = Uri.fromFile(new File(audioFilePath));
         } else if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
-            String placeName = String.format("Place: %s", place.getName());
-            double latitude = place.getLatLng().latitude;
-            double longitude = place.getLatLng().longitude;
+            address = place.getAddress().toString();
+            latitude = place.getLatLng().latitude;
+            longitude = place.getLatLng().longitude;
         }
     }
 
