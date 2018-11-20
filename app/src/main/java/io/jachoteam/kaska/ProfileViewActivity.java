@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -25,9 +24,11 @@ import io.jachoteam.kaska.models.User;
 import io.jachoteam.kaska.screens.common.GlideApp;
 
 public class ProfileViewActivity extends AppCompatActivity implements TabFragment.OnListFragmentInteractionListener,
-        Tab2Fragment.OnFragmentInteractionListener, Tab3Fragment.OnFragmentInteractionListener{
+        Tab2Fragment.OnFragmentInteractionListener, Tab3Fragment.OnFragmentInteractionListener {
     public String uid;
     public String username;
+    public TextView followersCountTextView;
+    public TextView followingCountTextView;
     String TAG = "ProfileViewActivity";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userRef;
@@ -52,14 +53,34 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
 
         sendMessage();
 
-        TabLayout tabLayout = (TabLayout)findViewById(R.id.tablayout);
+        followersCountTextView = (TextView) findViewById(R.id.followers_count_text);
+        followingCountTextView = (TextView) findViewById(R.id.following_count_text);
+
+        followersCountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("CLICK", "followers count clicked");
+                Intent intent = new Intent(getApplicationContext(), FollowersListActivity.class);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
+            }
+        });
+
+        followingCountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("CLICK", "Followings count clicked");
+            }
+        });
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tablayout);
         tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
         tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        final ViewPager viewPager = (ViewPager)findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(),tabLayout.getTabCount());
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+        final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
         viewPager.setOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 

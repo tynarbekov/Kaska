@@ -12,9 +12,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import io.jachoteam.kaska.models.User;
 
@@ -26,8 +24,8 @@ public class FollowersListActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference followersRef;
     DatabaseReference singleFollowerRef;
-    List<String> followersUid =  new ArrayList<>();
-    List<User> followers =  new ArrayList<>();
+    List<String> followersUid = new ArrayList<>();
+    List<User> followers = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,21 +35,22 @@ public class FollowersListActivity extends AppCompatActivity {
         String uid = intent.getStringExtra("uid");
         Log.i(TAG, uid);
 
-        followersRef = database.getReference("users/" + uid + "/followers");
+        followersRef = database.getReference("users/" + uid + "/follows");
 
         followersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.i("FollowersLoaded", dataSnapshot.toString());
-                for (DataSnapshot imageSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot imageSnapshot : dataSnapshot.getChildren()) {
                     String followerUid = imageSnapshot.getKey();
                     followersUid.add(followerUid);
+                    Log.i("Followers", followerUid);
                     singleFollowerRef = database.getReference("users/" + followerUid);
                     singleFollowerRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             followers.add(dataSnapshot.getValue(User.class));
-                            System.out.println(followers.toArray());
+                            Log.i("FOLLOWER_USER", dataSnapshot.toString());
                         }
 
                         @Override
@@ -60,6 +59,7 @@ public class FollowersListActivity extends AppCompatActivity {
                         }
                     });
                 }
+
             }
 
             @Override
