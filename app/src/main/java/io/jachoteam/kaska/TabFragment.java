@@ -36,7 +36,7 @@ public class TabFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    public Activity parentActivity = (ProfileViewActivity) getActivity();
+    public Activity parentActivity;
     ProgressDialog progressDoalog;
     // TODO: Customize parameters
     private int mColumnCount = 1;
@@ -68,8 +68,8 @@ public class TabFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
-        /*Create handle for the RetrofitInstance interface*/
+        parentActivity = (ProfileViewActivity) getActivity();
+                /*Create handle for the RetrofitInstance interface*/
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
 
         Call<List<RetroPhoto>> call = service.getAllPhotos();
@@ -77,7 +77,6 @@ public class TabFragment extends Fragment {
 
             @Override
             public void onResponse(Call<List<RetroPhoto>> call, Response<List<RetroPhoto>> response) {
-//                progressDoalog.dismiss();
                 generateDataList(response.body());
                 Log.i("RESPONSE_DATA", response.body().toArray().toString());
             }
