@@ -14,6 +14,10 @@ class PostDetailsSectionPageAdapter(fm: FragmentManager?) : FragmentPagerAdapter
         fragmentTitleList += title
     }
 
+    override fun getPageTitle(position: Int): CharSequence? {
+        return fragmentTitleList[position]
+    }
+
     override fun getItem(position: Int) = fragmentList[position]
 
     override fun getCount() = fragmentList.size

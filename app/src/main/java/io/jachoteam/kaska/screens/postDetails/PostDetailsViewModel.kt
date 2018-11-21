@@ -51,8 +51,6 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
 
         this.listener = listener
         initViews()
-//        Log.d("PostDetailsViewModel", "this.userId: ${this.userId}")
-//        Log.d("PostDetailsViewModel", "this.postId: ${this.postId}")
         if (!this::postId.isInitialized && !this::userId.isInitialized) {
             this.userId = userId
             this.postId = postId
@@ -77,10 +75,8 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
         return livePostLike
     }
 
-
     fun updatePostLikes(postLikes: FeedPostLikes) {
         this.postLikes = postLikes
-
         updatePostLikes()
     }
 
@@ -90,7 +86,6 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
     }
 
     private fun updatePost() {
-        Log.d("test->PostDetAct","POST-> Update: $post")
         userImageView.loadUserPhoto(post.photo)
         userNameTextView.text = post.username
         captionTextView.text = post.caption

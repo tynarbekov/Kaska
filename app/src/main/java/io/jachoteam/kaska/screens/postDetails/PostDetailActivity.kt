@@ -1,9 +1,11 @@
 package io.jachoteam.kaska.screens.postDetails
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
+import android.support.v4.app.Fragment
 import android.util.Log
 import io.jachoteam.kaska.ProfileViewActivity
 import io.jachoteam.kaska.R
@@ -28,6 +30,7 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private lateinit var postDetailsSectionPageAdapter: PostDetailsSectionPageAdapter
     private lateinit var postDetailsViewPager: ViewPager
+    private val fragmentPostDetailsSlidesFragment: PostDetailsSlidesFragment = PostDetailsSlidesFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,10 +45,8 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
         postDetailsViewPager = findViewById(R.id.post_details_section_page_container)
         setupViewPager(postDetailsViewPager)
 
-        var tabLayout = findViewById<TabLayout>(R.id.section_tabs)
+        val tabLayout = findViewById<TabLayout>(R.id.section_tabs)
         tabLayout.setupWithViewPager(postDetailsViewPager)
-        var section_tabs_toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar);
 
         setupAuthGuard { uid ->
             setupBottomNavigation(uid, 0)
@@ -54,6 +55,8 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
             mViewModel.feedPost.observe(this, Observer {
                 it?.let {
                     mViewModel.updatePost(it)
+//                    fragmentPostDetailsSlidesFragment.initSlider(it.images)
+                    fragmentPostDetailsSlidesFragment.imagesMap = it.images
                     loadLikes()
                 }
             })
@@ -96,7 +99,7 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = PostDetailsSectionPageAdapter(supportFragmentManager)
-        adapter.addFragment(PostDetailsSlidesFragment(), "Images")
+        adapter.addFragment(fragmentPostDetailsSlidesFragment, "Images")
         adapter.addFragment(PostDetailsVideoFragment(), "Video")
         adapter.addFragment(PostDetailsVoiceFragment(), "Voice")
         viewPager.adapter = adapter
