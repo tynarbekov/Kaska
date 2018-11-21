@@ -19,6 +19,7 @@ import java.util.List;
 
 import io.jachoteam.kaska.adapter.FollowersAdapter;
 import io.jachoteam.kaska.models.User;
+import io.jachoteam.kaska.screens.addfriends.AddFriendsViewModel;
 
 public class FollowersListActivity extends AppCompatActivity {
     public String TAG = "FollowersListActivity";
