@@ -9,8 +9,17 @@
 ### Endpoint for get UserList and PostList
 Post Method.
 For get UserList you should send query(search will be carried out in the 'username,name,bio,email') to 'https://us-central1-kgkaska.cloudfunctions.net/getUserList'.
-Acceptable parameters: Json, attribute => params
+POST REQUEST:
+https://us-central1-kgkaska.cloudfunctions.net/getUserList
+body: {
+  params: username|fullname|email
+}
 
 Post Method.
 And get PostList you should send query(search will be carried out in the 'tag') to 'https://us-central1-kgkaska.cloudfunctions.net/getPostListByTag'.
 Acceptable parameters: Json, attribute => params
+POST REQUEST:
+https://us-central1-kgkaska.cloudfunctions.net/getPostListByTag
+body: {
+  params: tags
+}
