@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.util.Log
 import io.jachoteam.kaska.FollowersListActivity
+import io.jachoteam.kaska.FollowingsListActivity
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.screens.addfriends.AddFriendsActivity
 import io.jachoteam.kaska.screens.common.*
@@ -44,6 +45,12 @@ class ProfileActivity : BaseActivity() {
 
             followers_count_text.setOnClickListener {
                 val intent = Intent(this, FollowersListActivity::class.java)
+                intent.putExtra("uid", uid);
+                startActivity(intent)
+            }
+
+            following_count_text.setOnClickListener {
+                val intent = Intent(this, FollowingsListActivity::class.java)
                 intent.putExtra("uid", uid);
                 startActivity(intent)
             }

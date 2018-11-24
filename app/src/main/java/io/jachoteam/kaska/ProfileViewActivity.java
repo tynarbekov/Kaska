@@ -33,6 +33,8 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userRef;
     DatabaseReference postRef;
+    User user;
+    boolean userLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,9 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
             @Override
             public void onClick(View v) {
                 Log.i("CLICK", "Followings count clicked");
+                Intent intent = new Intent(getApplicationContext(), FollowingsListActivity.class);
+                intent.putExtra("uid", uid);
+                startActivity(intent);
             }
         });
 
@@ -118,7 +123,8 @@ public class ProfileViewActivity extends AppCompatActivity implements TabFragmen
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
+                user = dataSnapshot.getValue(User.class);
+                userLoaded = true;
                 updateView(user);
                 System.out.println(user);
             }
