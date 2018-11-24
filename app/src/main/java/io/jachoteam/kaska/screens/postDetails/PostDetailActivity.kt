@@ -1,6 +1,5 @@
 package io.jachoteam.kaska.screens.postDetails
 
-import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
@@ -30,7 +29,9 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private lateinit var postDetailsSectionPageAdapter: PostDetailsSectionPageAdapter
     private lateinit var postDetailsViewPager: ViewPager
-    private val fragmentPostDetailsSlidesFragment: PostDetailsSlidesFragment = PostDetailsSlidesFragment()
+    private val fragmentPostDetailsSlides: FragmentSlidesPostDetails = FragmentSlidesPostDetails()
+    private val fragmentPostDetailsVoice: AbstractFragmentPostDetails = FragmentPostDetailsVoice()
+    private val fragemntsMap: MutableMap<String, AbstractFragmentPostDetails> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +56,11 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
             mViewModel.feedPost.observe(this, Observer {
                 it?.let {
                     mViewModel.updatePost(it)
-//                    fragmentPostDetailsSlidesFragment.initSlider(it.images)
-                    fragmentPostDetailsSlidesFragment.imagesMap = it.images
+//                    fragmentPostDetailsSlides.initSlider(it.images)
+                    fragmentPostDetailsSlides.imagesMap = it.images
+
+                    if (it.audioUrl.isNullOrBlank() && !it.audioUrl.isBlank())
+//                    Log.d("text->","LoadedPost: $it")
                     loadLikes()
                 }
             })
@@ -99,9 +103,9 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = PostDetailsSectionPageAdapter(supportFragmentManager)
-        adapter.addFragment(fragmentPostDetailsSlidesFragment, "Images")
-        adapter.addFragment(PostDetailsVideoFragment(), "Video")
-        adapter.addFragment(PostDetailsVoiceFragment(), "Voice")
+        adapter.addFragment(fragmentPostDetailsSlides as Fragment, "Images")
+        adapter.addFragment(FragmentPostDetailsVideo() as Fragment, "Video")
+        adapter.addFragment(fragmentPostDetailsVoice as Fragment, "Voice")
         viewPager.adapter = adapter
     }
 }
