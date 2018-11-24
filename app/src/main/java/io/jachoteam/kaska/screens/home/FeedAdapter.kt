@@ -58,6 +58,14 @@ class FeedAdapter(private val listener: Listener,
                         R.plurals.likes_count, likes.likesCount, likes.likesCount)
                 likes_text.text = likesCountText
             }
+
+            if (post.audioUrl.length > 0) {
+                has_audio_indicator.setImageResource(R.drawable.audio_icon)
+            } else {
+                has_audio_indicator.setImageResource(R.drawable.navigation_empty_icon)
+            }
+
+
             caption_text.setCaptionText(post.username, post.caption)
             like_image.setOnClickListener { listener.toggleLike(post.id) }
             username_text.setOnClickListener { listener.openProfile(post.username, post.uid) }

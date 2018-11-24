@@ -1,5 +1,6 @@
 package io.jachoteam.kaska.screens.postDetails
 
+import android.app.Activity
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.util.Log
@@ -11,7 +12,7 @@ import io.jachoteam.kaska.models.Image
 
 class FragmentSlidesPostDetails: AbstractFragmentPostDetails() {
 
-    internal var imagesMap: Map<String, Image> = mutableMapOf()
+    private var imagesMap: Map<String, Image> = mutableMapOf()
     private lateinit var postDetailsSlidingImageAdapter: ViewPager
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,4 +33,14 @@ class FragmentSlidesPostDetails: AbstractFragmentPostDetails() {
         return imagesList
     }
 
+    override fun releaseMedia() {
+        // do nothing
+    }
+
+    override fun setMedia(activity: Activity, url: String) {
+    }
+
+    override fun setImagesMap(map: Map<String,Image>) {
+        imagesMap = map
+    }
 }

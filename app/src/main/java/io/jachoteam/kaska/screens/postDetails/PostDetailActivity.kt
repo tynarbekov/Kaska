@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
 import android.util.Log
 import io.jachoteam.kaska.ProfileViewActivity
 import io.jachoteam.kaska.R
@@ -17,6 +16,7 @@ import io.jachoteam.kaska.screens.home.HomeActivity
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.Toolbar
 import android.view.View
+import io.jachoteam.kaska.models.FeedPost
 
 
 class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
@@ -29,9 +29,7 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private lateinit var postDetailsSectionPageAdapter: PostDetailsSectionPageAdapter
     private lateinit var postDetailsViewPager: ViewPager
-    private val fragmentPostDetailsSlides: FragmentSlidesPostDetails = FragmentSlidesPostDetails()
-    private val fragmentPostDetailsVoice: AbstractFragmentPostDetails = FragmentPostDetailsVoice()
-    private val fragemntsMap: MutableMap<String, AbstractFragmentPostDetails> = mutableMapOf()
+    private val fragmentsMap: MutableMap<String, AbstractFragmentPostDetails> = mutableMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +42,6 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
         postDetailsSectionPageAdapter = PostDetailsSectionPageAdapter(supportFragmentManager)
 
         postDetailsViewPager = findViewById(R.id.post_details_section_page_container)
-        setupViewPager(postDetailsViewPager)
 
         val tabLayout = findViewById<TabLayout>(R.id.section_tabs)
         tabLayout.setupWithViewPager(postDetailsViewPager)
@@ -56,11 +53,8 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
             mViewModel.feedPost.observe(this, Observer {
                 it?.let {
                     mViewModel.updatePost(it)
-//                    fragmentPostDetailsSlides.initSlider(it.images)
-                    fragmentPostDetailsSlides.imagesMap = it.images
-
-                    if (it.audioUrl.isNullOrBlank() && !it.audioUrl.isBlank())
-//                    Log.d("text->","LoadedPost: $it")
+//                    initFragmentsMap(it)
+                    AsyncLoad(it).run()
                     loadLikes()
                 }
             })
@@ -103,9 +97,44 @@ class PostDetailActivity : BaseActivity(), PostDetailsViewModel.Listener {
 
     private fun setupViewPager(viewPager: ViewPager) {
         val adapter = PostDetailsSectionPageAdapter(supportFragmentManager)
-        adapter.addFragment(fragmentPostDetailsSlides as Fragment, "Images")
-        adapter.addFragment(FragmentPostDetailsVideo() as Fragment, "Video")
-        adapter.addFragment(fragmentPostDetailsVoice as Fragment, "Voice")
+        fragmentsMap.forEach { title, fragment ->
+            run {
+                if (fragment != null) {
+                    adapter.addFragment(fragment, title)
+                }
+            }
+        }
         viewPager.adapter = adapter
+    }
+
+    private fun initFragmentsMap(post: FeedPost) {
+        if (post.images.size > 0) {
+            val fragmentSlidesPostDetails: AbstractFragmentPostDetails = FragmentSlidesPostDetails()
+            fragmentSlidesPostDetails.setImagesMap(post.images)
+            fragmentsMap["Images"] = fragmentSlidesPostDetails
+        }
+
+        if (post.audioUrl.length > 0) {
+            val fragmentPostDetailsVoice: AbstractFragmentPostDetails = FragmentPostDetailsVoice()
+            fragmentPostDetailsVoice.setMedia(this, post.audioUrl)
+            fragmentsMap["Voice"] = fragmentPostDetailsVoice
+        }
+        // implement for video
+        setupViewPager(postDetailsViewPager)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        fragmentsMap.forEach { _, fragment ->
+            run {
+                fragment.releaseMedia()
+            }
+        }
+    }
+
+    inner class AsyncLoad(internal val post: FeedPost) : Runnable {
+        override fun run() {
+            initFragmentsMap(post)
+        }
     }
 }
