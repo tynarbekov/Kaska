@@ -54,10 +54,10 @@ class FeedSlidingImageAdapter(private var context: Context,
             Log.d("Click: ", postId)
         }
         imageViewPrev.setOnClickListener {
-            // change current image by clicking on previews
+            HomeActivity.mPager.currentItem = position - 1
         }
         imageViewNext.setOnClickListener {
-            // change current image by clicking on previews
+            HomeActivity.mPager.currentItem = position + 1
         }
 
         view.addView(imageLayout, 0)
