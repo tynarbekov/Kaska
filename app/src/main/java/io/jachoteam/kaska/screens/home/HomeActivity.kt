@@ -25,7 +25,7 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         Log.d(TAG, "onCreate")
-        userUid = FirebaseAuth.getInstance().currentUser!!.uid
+//        userUid = FirebaseAuth.getInstance().currentUser!!.uid
 
         mAdapter = FeedAdapter(this, this@HomeActivity)
         feed_recycler.adapter = mAdapter
@@ -55,7 +55,7 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     override fun openProfile(username: String, uid: String) {
         Log.d(TAG, "VIEW PROFILE: $username, $uid")
-        if (userUid!=null && uid.equals(userUid)) {
+        if (uid.equals(userUid)) {
             val intent = Intent(this, ProfileActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
             startActivity(intent)
