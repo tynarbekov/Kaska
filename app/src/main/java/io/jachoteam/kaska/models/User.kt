@@ -2,7 +2,7 @@ package io.jachoteam.kaska.models
 
 import com.google.firebase.database.Exclude
 
-data class User(val name: String = "", val username: String = "", val email: String = "",
+data class User(val name: String = "", var username: String = "", val email: String = "",
                 val follows: Map<String, Boolean> = emptyMap(),
                 val followers: Map<String, Boolean> = emptyMap(),
                 val website: String? = null, val bio: String? = null, val phone: Long? = null,

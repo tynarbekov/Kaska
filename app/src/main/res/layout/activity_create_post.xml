@@ -36,6 +36,7 @@
                 android:id="@+id/share_text"
                 style="@style/toolbar_text"
                 android:text="@string/share"
+                android:textColor="@color/share_post"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -81,9 +82,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="352dp"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/record_audio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Record Audio" />
+
+        <Button
+            android:id="@+id/pick_location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pick Location" />
+
         <EditText
             android:id="@+id/caption_input"
+            style="@style/Widget.AppCompat.EditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="15dp"

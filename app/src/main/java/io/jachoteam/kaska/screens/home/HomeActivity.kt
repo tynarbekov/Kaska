@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import io.jachoteam.kaska.ProfileViewActivity
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.screens.comments.CommentsActivity
@@ -17,6 +18,7 @@ import io.jachoteam.kaska.screens.common.setupBottomNavigation
 import io.jachoteam.kaska.screens.postDetails.DefaultPostDetailsImpl
 import io.jachoteam.kaska.screens.postDetails.PostDetailActivity
 import io.jachoteam.kaska.screens.postDetails.PostDetailsService
+import io.jachoteam.kaska.screens.profile.ProfileActivity
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity(), FeedAdapter.Listener {
@@ -25,10 +27,12 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     private val defaultPostDetailsService: PostDetailsService = DefaultPostDetailsImpl(this)
 
+    public var userUid = "";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         Log.d(TAG, "onCreate")
+//        userUid = FirebaseAuth.getInstance().currentUser!!.uid
 
         mAdapter = FeedAdapter(this,this@HomeActivity, defaultPostDetailsService)
         feed_recycler.adapter = mAdapter
@@ -58,10 +62,17 @@ class HomeActivity : BaseActivity(), FeedAdapter.Listener {
 
     override fun openProfile(username: String, uid: String) {
         Log.d(TAG, "VIEW PROFILE: $username, $uid")
-        val profileIntent = Intent(this, ProfileViewActivity::class.java)
-        profileIntent.putExtra("uid", uid);
-        profileIntent.putExtra("username", username);
-        startActivity(profileIntent)
+        if (uid.equals(userUid)) {
+            val intent = Intent(this, ProfileActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NO_ANIMATION
+            startActivity(intent)
+            overridePendingTransition(0, 0)
+        } else {
+            val profileIntent = Intent(this, ProfileViewActivity::class.java)
+            profileIntent.putExtra("uid", uid);
+            profileIntent.putExtra("username", username);
+            startActivity(profileIntent)
+        }
     }
 
     override fun loadLikes(postId: String, position: Int) {
