@@ -2,6 +2,7 @@ package io.jachoteam.kaska.screens.home
 
 import android.content.Context
 import android.support.v4.view.PagerAdapter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,13 @@ import com.bumptech.glide.request.RequestOptions
 import io.jachoteam.kaska.R
 import io.jachoteam.kaska.models.Image
 import io.jachoteam.kaska.screens.common.GlideApp
+import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 
-class FeedSlidingImageAdapter(private var context: Context, private var images: List<Image>) : PagerAdapter() {
+class FeedSlidingImageAdapter(private var context: Context,
+                              private var images: List<Image>,
+                              private var postDetailsService: PostDetailsService,
+                              private var postUserId: String,
+                              private var postId: String) : PagerAdapter() {
 
     private var inflater: LayoutInflater = LayoutInflater.from(context)
 
@@ -42,11 +48,16 @@ class FeedSlidingImageAdapter(private var context: Context, private var images: 
 
         updateViews(position)
 
+        imageView.setOnClickListener {
+
+            postDetailsService.openPostDetails(postUserId, postId)
+            Log.d("Click: ", postId)
+        }
         imageViewPrev.setOnClickListener {
-            // change current image by clicking on previews
+            HomeActivity.mPager.currentItem = position - 1
         }
         imageViewNext.setOnClickListener {
-            // change current image by clicking on previews
+            HomeActivity.mPager.currentItem = position + 1
         }
 
         view.addView(imageLayout, 0)

@@ -11,10 +11,12 @@ import io.jachoteam.kaska.R
 import io.jachoteam.kaska.models.FeedPost
 import io.jachoteam.kaska.models.Image
 import io.jachoteam.kaska.screens.common.*
+import io.jachoteam.kaska.screens.postDetails.PostDetailsService
 import kotlinx.android.synthetic.main.feed_item.view.*
 
 class FeedAdapter(private val listener: Listener,
-                  private var context: Context)
+                  private var context: Context,
+                  private val postDetailsService: PostDetailsService)
     : RecyclerView.Adapter<FeedAdapter.ViewHolder>() {
 
     interface Listener {
@@ -47,7 +49,7 @@ class FeedAdapter(private val listener: Listener,
         with(holder.view) {
             user_photo_image.loadUserPhoto(post.photo)
             username_text.text = post.username
-            init(post.images,feed_slider_pager)
+            init(post.images, feed_slider_pager, post.uid, post.id)
             if (likes.likesCount == 0) {
                 likes_text.visibility = View.GONE
             } else {
@@ -56,6 +58,14 @@ class FeedAdapter(private val listener: Listener,
                         R.plurals.likes_count, likes.likesCount, likes.likesCount)
                 likes_text.text = likesCountText
             }
+
+            if (post.audioUrl.length > 0) {
+                has_audio_indicator.setImageResource(R.drawable.audio_icon)
+            } else {
+                has_audio_indicator.setImageResource(R.drawable.navigation_empty_icon)
+            }
+
+
             caption_text.setCaptionText(post.username, post.caption)
             like_image.setOnClickListener { listener.toggleLike(post.id) }
             username_text.setOnClickListener { listener.openProfile(post.username, post.uid) }
@@ -75,7 +85,7 @@ class FeedAdapter(private val listener: Listener,
         diffResult.dispatchUpdatesTo(this)
     }
 
-    private fun init(imagesMap: Map <String, Image>,sliderPager: ViewPager){
+    private fun init(imagesMap: Map<String, Image>, sliderPager: ViewPager, postUserId: String, postId: String) {
         var imagesList: MutableList<Image> = mutableListOf()
         imagesMap.forEach { (key, value) ->
             run {
@@ -84,7 +94,7 @@ class FeedAdapter(private val listener: Listener,
         }
         imagesList.sortBy { i -> i.order }
         HomeActivity.mPager = sliderPager
-        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList)
+        HomeActivity.mPager.adapter = FeedSlidingImageAdapter(context, imagesList, postDetailsService, postUserId, postId)
     }
 
 }

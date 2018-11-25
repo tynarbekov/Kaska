@@ -378,7 +378,7 @@ public class CreatePostActivity extends BaseActivity implements IPickResult {
                 user.getPhoto(),
                 "",
                 0,
-                "",
+                ""),
                 address,
                 longitude,
                 latitude);

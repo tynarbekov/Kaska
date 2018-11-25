@@ -57,17 +57,6 @@
         <activity android:name=".CreatePostActivity" />
         <activity android:name=".RecordAudioActivity" />
 
-        <provider
-            android:name="android.support.v4.content.FileProvider"
-            android:authorities="${applicationId}.com.vansuita.pickimage.provider"
-            android:exported="false"
-            android:grantUriPermissions="true"
-            tools:replace="android:authorities">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/picker_provider_paths" />
-        </provider>
-
         <!-- <provider -->
         <!-- android:name="android.support.v4.content.FileProvider" -->
         <!-- android:authorities="io.jachoteam.kaska.fileprovider" -->
@@ -78,6 +67,29 @@
         <!-- android:name="android.support.FILE_PROVIDER_PATHS" -->
         <!-- android:resource="@xml/file_paths" /> -->
         <!-- </provider> -->
+
+        <activity android:name=".ResetPasswordActivity" />
+        <activity android:name=".ProfileViewActivity" />
+        <activity
+            android:name=".ChatActivity"
+            android:label="@string/chat_label"
+            android:theme="@style/BlueTheme" />
+        <activity android:name=".FollowersListActivity" />
+        <activity android:name=".CreatePostActivity" />
+        <activity
+            android:name=".screens.postDetails.PostDetailActivity"></activity>
+        <activity android:name=".RecordAudioActivity" />
+
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.com.vansuita.pickimage.provider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            tools:replace="android:authorities">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/picker_provider_paths" />
+        </provider>
         <activity android:name=".FollowingsListActivity"></activity>
     </application>
 
