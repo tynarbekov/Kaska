@@ -38,6 +38,14 @@
         app:layout_constraintTop_toTopOf="@id/user_photo_image"
         app:layout_constraintBottom_toBottomOf="@id/user_photo_image"/>
 
+    <TextView
+        android:id="@+id/user_address_text"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:layout_constraintStart_toEndOf="@id/user_photo_image"
+        app:layout_constraintTop_toBottomOf="@id/username_text"
+        />
+
     <ImageView
         android:id="@+id/more_image"
         style="@style/icon"

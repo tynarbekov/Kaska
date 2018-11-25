@@ -65,6 +65,9 @@ class FeedAdapter(private val listener: Listener,
                 has_audio_indicator.setImageResource(R.drawable.navigation_empty_icon)
             }
 
+            if (post.address.length > 0) {
+                user_address_text.text = post.address
+            }
 
             caption_text.setCaptionText(post.username, post.caption)
             like_image.setOnClickListener { listener.toggleLike(post.id) }

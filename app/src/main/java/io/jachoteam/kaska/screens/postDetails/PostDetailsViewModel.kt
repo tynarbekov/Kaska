@@ -45,6 +45,7 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
     private lateinit var shareImageView: ImageView
     private lateinit var likeTextView: TextView
     private lateinit var captionTextView: TextView
+    private lateinit var userAddressText: TextView
 
 
     fun init(userId: String, postId: String, listener: Listener) {
@@ -89,6 +90,7 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
         userImageView.loadUserPhoto(post.photo)
         userNameTextView.text = post.username
         captionTextView.text = post.caption
+        userAddressText.text = post.address
         likeImageView.setOnClickListener{ listener.toggleLike()}
         userNameTextView.setOnClickListener { listener.openProfile(post.username, post.uid) }
         userImageView.setOnClickListener { listener.openProfile(post.username, post.uid) }
@@ -123,5 +125,6 @@ class PostDetailsViewModel(onFailureListener: OnFailureListener,
         shareImageView = listener.getActivity().findViewById(R.id.post_share_image)
         likeTextView = listener.getActivity().findViewById(R.id.post_likes_text)
         captionTextView = listener.getActivity().findViewById(R.id.post_caption_text)
+        userAddressText = listener.getActivity().findViewById(R.id.user_address_text)
     }
 }

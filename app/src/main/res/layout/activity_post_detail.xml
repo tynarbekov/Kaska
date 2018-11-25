@@ -38,16 +38,31 @@
             style="@style/icon"
             android:src="@drawable/person"
             app:layout_constraintTop_toBottomOf="@id/toolbar"/>
-        <TextView
-            android:id="@+id/post_username_text"
+
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="willsmith"
-            android:textColor="@color/black"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@id/post_user_photo_image"
-            app:layout_constraintTop_toTopOf="@id/post_user_photo_image"
-            app:layout_constraintBottom_toBottomOf="@id/post_user_photo_image"/>
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/post_username_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/post_user_photo_image"
+                app:layout_constraintStart_toEndOf="@id/post_user_photo_image"
+                app:layout_constraintTop_toTopOf="@id/post_user_photo_image"
+                tools:text="willsmith" />
+
+            <TextView
+                android:id="@+id/user_address_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toEndOf="@id/user_photo_image"
+                app:layout_constraintTop_toBottomOf="@id/username_text" />
+        </LinearLayout>
 
     </LinearLayout>
 
